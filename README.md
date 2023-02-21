@@ -26,3 +26,13 @@ Create a file called `arduino_secrets.h`in the `src`directory, add your SSID and
 
 #endif
 ```
+
+Web UI
+
+![Index](image.png)
+
+Rename
+![Index](image_rename.png)
+
+N.I.N.A
+![Index](image_nina.png)
