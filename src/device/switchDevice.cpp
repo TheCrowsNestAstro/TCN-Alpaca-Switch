@@ -118,38 +118,7 @@ String SwitchDevice::getSwitchState()
         array.add(doc2);
     }
 
-    
-
     String output;
     serializeJson(array, output);
     return output;
-
-    /*
-    DynamicJsonDocument doc(1024);
-
-    for(int i = 0; i < NR_OF_RELAYS; i++)
-    {
-        doc["Value"] = val;
-        doc["ErrorMessage"] = errMsg;
-        doc["ErrorNumber"] = errNr;
-        doc["ClientTransactionID"] = transID;
-        doc["ServerTransactionID"] = serverTransactionID;
-    }
-
-    String output;
-    serializeJson(doc, output);
-    return output
-
-    */
-    /*
-    String output = "";
-    for(int i = 0; i < NR_OF_RELAYS; i++)
-    {
-        output += channelNames[i];
-        output += "|";
-        output += String(registers[i]);
-        output += ",";
-    }
-    return output;
-    */
 }
