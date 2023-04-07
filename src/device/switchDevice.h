@@ -4,6 +4,7 @@
 #include <EEPROM.h>
 #include <ArduinoLog.h>
 #include "configuration.hpp"
+#include <ArduinoJson.h>
 
 class SwitchDevice
 {
@@ -26,6 +27,9 @@ class SwitchDevice
 
         void readEEPROM();
         void writeEEPROM();
+
+        // MQTT
+        String getSwitchState();
 
     private:
         void writeRelayData(int relay, int boolValue, double doubleValue);

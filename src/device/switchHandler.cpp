@@ -591,3 +591,8 @@ void SwitchHandler::storeEEPROM()
 {
     switchDevice->writeEEPROM();
 }
+
+String SwitchHandler::getSwitchState()
+{
+    return switchDevice->getSwitchState();
+}

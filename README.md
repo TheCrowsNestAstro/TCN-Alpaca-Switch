@@ -18,11 +18,13 @@ Create a file called `arduino_secrets.h`in the `src`directory, add your SSID and
 
 #define _SSID ""
 #define _PASSWORD ""
-#define _HOSTNAME "TCNSwitch"
+#define _HOSTNAME ""
 
-#define REDIS_ADDR ""
-#define REDIS_PORT 6379
-#define REDIS_PASSWORD ""
+#define MQTT_HOST IPAddress(192, 168, 1, xxx)
+#define MQTT_TOPIC "tcn/switch"
+#define MQTT_PORT 1883
+#define MQTT_USER "";
+#define MQTT_PASS "";
 
 #endif
 ```

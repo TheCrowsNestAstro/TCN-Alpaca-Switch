@@ -7,7 +7,8 @@ SwitchDevice::SwitchDevice()
     pinMode(RELAY_CLOCK_PIN, OUTPUT);
     pinMode(RELAY_OE_PIN, OUTPUT);
 
-    //readEEPROM();
+    // readEEPROM();
+    // writeEEPROM(); // FIRST TIME UNCOMMENT
     
     for(int i = NR_OF_RELAYS-1; i >=  0; i--){
         registers[i] = false;
@@ -100,4 +101,55 @@ bool SwitchDevice::getRelayState(int idx)
 double SwitchDevice::getRelayStateDouble(int idx)
 {
     return registersDouble[idx];
+}
+
+String SwitchDevice::getSwitchState()
+{
+    
+    StaticJsonDocument<1024> doc;
+    DynamicJsonDocument doc2(1024);
+
+    JsonArray array = doc.createNestedArray("switches");
+
+    for(int i = 0; i < NR_OF_RELAYS; i++)
+    {
+        doc2["name"] = channelNames[i];
+        doc2["value"] = String(registers[i]);
+        array.add(doc2);
+    }
+
+    
+
+    String output;
+    serializeJson(array, output);
+    return output;
+
+    /*
+    DynamicJsonDocument doc(1024);
+
+    for(int i = 0; i < NR_OF_RELAYS; i++)
+    {
+        doc["Value"] = val;
+        doc["ErrorMessage"] = errMsg;
+        doc["ErrorNumber"] = errNr;
+        doc["ClientTransactionID"] = transID;
+        doc["ServerTransactionID"] = serverTransactionID;
+    }
+
+    String output;
+    serializeJson(doc, output);
+    return output
+
+    */
+    /*
+    String output = "";
+    for(int i = 0; i < NR_OF_RELAYS; i++)
+    {
+        output += channelNames[i];
+        output += "|";
+        output += String(registers[i]);
+        output += ",";
+    }
+    return output;
+    */
 }

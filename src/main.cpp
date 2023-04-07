@@ -3,17 +3,13 @@
 #include <ESP8266WebServer.h>
 #include <ESP8266HTTPUpdateServer.h>
 #include <arduino-timer.h>
-#include <Redis.h>
 #include <ArduinoLog.h>
-
-//#include <Adafruit_Sensor.h>
-//#include <Adafruit_INA260.h>
+#include <PubSubClient.h>
 
 #include "arduino_secrets.h"
 #include "configuration.hpp"
 #include "device\switchHandler.h"
-// #include "sensors\dh11Sensor.h"
-// #include "sensors\ina260Sensor.h"
+
 #include "html.h"
 
 int status = WL_IDLE_STATUS;
@@ -23,26 +19,33 @@ char ssid[] = _SSID;     // your network SSID (name)
 char pass[] = _PASSWORD; // your network password (use for WPA, or use as key for WEP)
 int keyIndex = 0;        // your network key Index number (needed only for WEP)
 
+
+// MQTT Broker
+IPAddress mqtt_server = MQTT_HOST;
+const char *topic = MQTT_TOPIC;
+const int mqtt_port = MQTT_PORT; //1883;
+const char *mqtt_user = MQTT_USER; //"chris";
+const char *mqtt_password = MQTT_PASS; // "wandasee2me3";
+// end of MQTT
+
 unsigned int localPort = 32227;  // The Alpaca Discovery test port
 unsigned int alpacaPort = 11111; // The (fake) port that the Alpaca API would be available on
-
 char packetBuffer[255]; // buffer to hold incoming packet
 
 ESP8266WebServer *server = new ESP8266WebServer(alpacaPort);
-
 ESP8266HTTPUpdateServer updater;
 WiFiUDP Udp;
 ESP8266WebServer webServer(80);
 
-// Redis
-bool redisConnected = false;
-WiFiClient redisConn;
-Redis *gRedis = nullptr;
+// MQTT
+WiFiClient espClient;
+PubSubClient client(espClient);
+unsigned long lastMsg = 0;
+#define MSG_BUFFER_SIZE	(50)
+char msg[MSG_BUFFER_SIZE];
+int value = 0;
 
 SwitchHandler *device = new SwitchHandler(server);
-// DH11Sensor *dh11 = new DH11Sensor();
-// Adafruit_INA260 ina260 = Adafruit_INA260();
-// INA260Sensor *ina260 = new INA260Sensor();
 
 auto timer = timer_create_default();
 
@@ -51,6 +54,71 @@ void handleRoot();
 void handleUpdate();
 void handleEdit();
 void handleRename();
+void printWifiStatus();
+void callback(char* topic, byte* payload, unsigned int length);
+
+// WIFI
+WiFiEventHandler wifiConnectHandler;
+WiFiEventHandler wifiDisconnectHandler;
+
+void onWifiConnect(const WiFiEventStationModeGotIP& event) {
+  Serial.println("Connected to Wi-Fi sucessfully.");
+  printWifiStatus();
+}
+
+void onWifiDisconnect(const WiFiEventStationModeDisconnected& event) {
+  Serial.println("Disconnected from Wi-Fi, trying to connect...");
+  WiFi.disconnect();
+  WiFi.begin(ssid, pass);
+}
+
+// MQTT
+void callback(char* topic, byte* payload, unsigned int length) {
+  Serial.print("Message arrived [");
+  Serial.print(topic);
+  Serial.print("] ");
+  for (int i = 0; i < length; i++) {
+    Serial.print((char)payload[i]);
+  }
+  Serial.println();
+}
+
+void reconnect() {
+  // Loop until we're reconnected
+  while (!client.connected()) {
+    Serial.print("Attempting MQTT connection...");
+    // Create a random client ID
+    String clientId = "ESP8266Client-";
+    clientId += String(random(0xffff), HEX);
+    // Attempt to connect
+    if (client.connect(clientId.c_str(), mqtt_user, mqtt_password))
+    {
+      Serial.println("connected");
+      client.publish(MQTT_TOPIC, "Switch is running");
+      // client.subscribe("inTopic");
+    }
+    else
+    {
+      Serial.print("failed, rc=");
+      Serial.print(client.state());
+      Serial.println(" try again in 5 seconds");
+      // Wait 5 seconds before retrying
+      delay(5000);
+    }
+  }
+}
+
+bool publishStatus(void *)
+{
+  if(client.connected())
+  {
+    String output = device->getSwitchState();
+    Log.traceln(output.c_str());
+    client.publish(MQTT_TOPIC, output.c_str());
+
+  }
+  return true;
+}
 
 // ALPACA
 void CheckForDiscovery()
@@ -91,11 +159,6 @@ void CheckForDiscovery()
     Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
     Udp.write(buffer, 36);
     Udp.endPacket();
-
-    // send a reply, to the IP address and port that sent us the packet we received
-    //Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
-    //Udp.write(buffer, 36);
-    //Udp.endPacket();
   }
 }
 
@@ -111,50 +174,6 @@ void printWifiStatus()
   // print the received signal strength:
   long rssi = WiFi.RSSI();
   Log.traceln("signal strength (RSSI): %l dBm" CR, rssi);
-}
-/*
-bool readSensors(void *)
-{
-  
-  String temperatureReading = dh11->getReading();
-  Log.infoln(F("DH11: %S" CR), temperatureReading.c_str());
-  
-  String powerReading = ina260->getReading();
-  Log.infoln("INA260: %S" CR, powerReading.c_str());
-  
-  
-  if (redisConnected)
-  {
-    gRedis->publish("app:notifications", temperatureReading.c_str());
-    gRedis->publish("app:notifications", powerReading.c_str());
-  }
-  
-  return true; // repeat? true
-}
-*/
-void connectToRedis()
-{
-  // Redis
-  if (!redisConn.connect(REDIS_ADDR, REDIS_PORT))
-  {
-    Log.errorln("%S" CR, "Failed to connect to the Redis server!");
-    redisConnected = false;
-  }
-  else
-  {
-    gRedis = new Redis(redisConn);
-    auto connRet = gRedis->authenticate(REDIS_PASSWORD);
-    if (connRet == RedisSuccess)
-    {
-      Log.infoln("Connected to the Redis server at %S" CR, REDIS_ADDR);
-      redisConnected = true;
-    }
-    else
-    {
-      Log.errorln("Failed to authenticate to the Redis server! Errno: %d" CR,  connRet);
-      redisConnected = false;
-    } 
-  }
 }
 
 void handleMgmtVersions() { device->handlerMgmtVersions(); }
@@ -185,33 +204,12 @@ void handleDriver0MaxSwitchValue() { device->handlerDriver0MaxSwitchValue(); }
 void handleDriver0SwitchStep() { device->handlerDriver0SwitchStep(); }
 
 /******************************************
- * HTML
-*/
-
-
-
-/*
-// Replaces placeholder with button section in your web page
-String processor(const String& var){
-  //Serial.println(var);
-  if(var == "BUTTONPLACEHOLDER"){
-    String buttons ="";
-    // for(int i=1; i<=NUM_RELAYS; i++){
-    //  String relayStateValue = relayState(i);
-    //  buttons+= "<h4>Relay #" + String(i) + " - GPIO " + relayGPIOs[i-1] + "</h4><label class=\"switch\"><input type=\"checkbox\" onchange=\"toggleCheckbox(this)\" id=\"" + String(i) + "\" "+ relayStateValue +"><span class=\"slider\"></span></label>";
-    //}
-    return buttons;
-  }
-  return String();
-}
-*/
-/******************************************
  * SETUP
  ******************************************/
 void setup()
 {
   Serial.begin(9600);
-
+  
   // Initialize with log level and log output.
   Log.begin(LOG_LEVEL_TRACE, &Serial);
 
@@ -220,6 +218,10 @@ void setup()
   // Some ESP8266 modules broadcast their own network, this turns that off
   WiFi.mode(WIFI_STA);
   WiFi.hostname(hostname);
+
+  //Register event handlers
+  wifiConnectHandler = WiFi.onStationModeGotIP(onWifiConnect);
+  wifiDisconnectHandler = WiFi.onStationModeDisconnected(onWifiDisconnect);
 
   // attempt to connect to the Wifi network defined in arduino_secrets.h
   WiFi.begin(ssid, pass);
@@ -230,8 +232,14 @@ void setup()
     Log.traceln(".");
   }
 
-  Log.infoln("Connected to wifi");
-  printWifiStatus();
+  // MQTT
+  client.setServer(mqtt_server, 1883);
+  client.setCallback(callback);
+
+  timer.every(5000, publishStatus);
+
+  //Log.infoln("Connected to wifi");
+  // printWifiStatus();
 
   // Management API
   server->on("/management/apiversions", HTTP_GET, handleMgmtVersions);
@@ -278,19 +286,14 @@ void setup()
 
   Udp.begin(localPort);
 
-  connectToRedis();
+  // connectToRedis();
 
   // Webserver
   webServer.on("/", handleRoot);
   webServer.on("/edit", handleEdit);
   webServer.on("/rename", HTTP_POST, handleRename);
-
   webServer.on("/update", HTTP_GET, handleUpdate);
-  /*
-  webServer.on("/", HTTP_GET, [](ESP8266WebServer *request){
-    webServer.send_P(200, "text/html", index_html);
-  });
-  */
+
   webServer.begin();
 
 }
@@ -387,5 +390,14 @@ void loop()
   server->handleClient();
   webServer.handleClient();
   CheckForDiscovery();
+
+  // MQTT
+  if (!client.connected()) {
+    reconnect();
+  }
+  client.loop();
+
+  // CHECK
   timer.tick();
+
 }

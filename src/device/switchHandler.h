@@ -48,6 +48,9 @@ class SwitchHandler
         String getSwitchName(int id);
         void setSwitchName(int id, String name);
         void storeEEPROM();
+
+        // MQTT
+        String getSwitchState();
     
     private:
         uint32_t transID;

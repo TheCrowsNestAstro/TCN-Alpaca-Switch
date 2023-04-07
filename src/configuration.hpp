@@ -24,5 +24,3 @@
 #define RELAY_LATCH_PIN 12
 #define RELAY_CLOCK_PIN 13
 #define RELAY_OE_PIN 5
-
-#define DHT_PIN 14
