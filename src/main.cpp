@@ -2,6 +2,7 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266HTTPUpdateServer.h>
+#include <ESP8266mDNS.h>
 #include <arduino-timer.h>
 #include <ArduinoLog.h>
 #include <PubSubClient.h>
@@ -63,6 +64,9 @@ WiFiEventHandler wifiDisconnectHandler;
 
 void onWifiConnect(const WiFiEventStationModeGotIP& event) {
   Serial.println("Connected to Wi-Fi sucessfully.");
+  if(MDNS.begin(mDNS_NAME)) {
+    Log.infoln("MDNS started");
+  }
   printWifiStatus();
 }
 
@@ -208,7 +212,7 @@ void handleDriver0SwitchStep() { device->handlerDriver0SwitchStep(); }
  ******************************************/
 void setup()
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
   
   // Initialize with log level and log output.
   Log.begin(LOG_LEVEL_TRACE, &Serial);
@@ -216,8 +220,8 @@ void setup()
   Log.infoln("Connecting to WIFI...");
 
   // Some ESP8266 modules broadcast their own network, this turns that off
-  WiFi.mode(WIFI_STA);
-  WiFi.hostname(hostname);
+  //WiFi.mode(WIFI_STA);
+  WiFi.hostname(mDNS_NAME);
 
   //Register event handlers
   wifiConnectHandler = WiFi.onStationModeGotIP(onWifiConnect);
@@ -396,6 +400,8 @@ void loop()
     reconnect();
   }
   client.loop();
+
+  MDNS.update();
 
   // CHECK
   timer.tick();
