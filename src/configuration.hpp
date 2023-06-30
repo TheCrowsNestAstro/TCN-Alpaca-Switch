@@ -1,4 +1,5 @@
 #pragma once
+#include "Constants.hpp"
 
 //#define ESP32
 
@@ -6,6 +7,9 @@
 #define MANUFACTURER "Christian Kardach"
 #define MANUFACTURER_VERSION "1.1"
 #define LOCATION "SE"
+
+#define BOARD BOARD_ESP8266_RELAY_MODULE
+//#define BOARD BOARD_OPENASTROPOWERHUB
 
 #define DEVICE_NAME "TCN Power Switch"
 #define DEVICE_TYPE "Switch"

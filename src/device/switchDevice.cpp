@@ -1,19 +1,19 @@
 #include "device\switchDevice.h"
 
-SwitchDevice::SwitchDevice()
-{
-    pinMode(RELAY_DATA_PIN, OUTPUT);
-    pinMode(RELAY_LATCH_PIN, OUTPUT);
-    pinMode(RELAY_CLOCK_PIN, OUTPUT);
-    pinMode(RELAY_OE_PIN, OUTPUT);
+SwitchDevice::SwitchDevice() {
 
-    // readEEPROM();
-    // writeEEPROM(); // FIRST TIME UNCOMMENT
-    
-    for(int i = NR_OF_RELAYS-1; i >=  0; i--){
-        registers[i] = false;
-    }
-    writeRelayData(0, false, 0.0);
+#if BOARD == BOARD_OPENASTROPOWERHUB
+  _device = new OpenAstroPowerHub();
+#elif BOARD == BOARD_ESP8266_RELAY_MODULE
+  _device = new ESP8266_Relay_Module();
+#endif
+  // readEEPROM();
+  // writeEEPROM(); // FIRST TIME UNCOMMENT
+
+  for (int i = NR_OF_RELAYS - 1; i >= 0; i--) {
+    registers[i] = false;
+  }
+  _device->writeRelayData(0, false, 0.0, registers, registersDouble);
 }
 
 void SwitchDevice::readEEPROM()
@@ -44,23 +44,8 @@ void SwitchDevice::writeEEPROM()
     EEPROM.commit();
 }
 
-void SwitchDevice::writeRelayData(int relay, int boolValue, double doubleValue)
-{
-    Log.traceln(F("writeRelayData nr: %d %T" CR), relay, boolValue);
-    registers[relay] = boolValue;
-    registersDouble[relay] = doubleValue;
-    
-    digitalWrite(RELAY_LATCH_PIN, LOW);
-    for(int i = NR_OF_RELAYS-1; i >=  0; i--)
-    {
-        digitalWrite(RELAY_CLOCK_PIN, LOW); int val = registers[i];
-        digitalWrite(RELAY_DATA_PIN, val);
-        digitalWrite(RELAY_CLOCK_PIN, HIGH);
-    }
-    digitalWrite(RELAY_LATCH_PIN, HIGH);
-    
-    //relayStateBool[relay] = boolValue;
-    //relayStateValue[relay] = doubleValue;
+void SwitchDevice::writeRelayData(int relay, int boolValue, double doubleValue) {
+  _device->writeRelayData(relay, boolValue, doubleValue, registers, registersDouble);
 }
 
 

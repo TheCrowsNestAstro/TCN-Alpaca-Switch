@@ -6,6 +6,12 @@
 #include "configuration.hpp"
 #include <ArduinoJson.h>
 
+#if BOARD == BOARD_OPENASTROPOWERHUB
+#include "device\OpenAstroPowerHub\OpenAstroPowerHub.h"
+#elif BOARD == BOARD_ESP8266_RELAY_MODULE
+#include "device\ESP8266 Relay Module\ESP8266_Relay_Module.h"
+#endif
+
 class SwitchDevice
 {
     public:
@@ -32,6 +38,11 @@ class SwitchDevice
         String getSwitchState();
 
     private:
+      #if BOARD == BOARD_OPENASTROPOWERHUB
+        OpenAstroPowerHub *_device;
+      #elif BOARD == BOARD_ESP8266_RELAY_MODULE
+        ESP8266_Relay_Module *_device;
+      #endif
         void writeRelayData(int relay, int boolValue, double doubleValue);
         //uint16_t relayData = 0b0000000000000000;
         //byte relayData = B00000000;
