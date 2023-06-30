@@ -7,10 +7,7 @@ ESP8266_Relay_Module::ESP8266_Relay_Module() {
   pinMode(RELAY_OE_PIN, OUTPUT);
 }
 
-void ESP8266_Relay_Module::writeRelayData(
-    int relay, int boolValue, double doubleValue,
-    boolean (&registers)[NR_OF_RELAYS],
-    double (&registersDouble)[NR_OF_RELAYS]) {
+void ESP8266_Relay_Module::writeRelayData(int relay, int boolValue, double doubleValue, boolean (&registers)[NR_OF_RELAYS], double (&registersDouble)[NR_OF_RELAYS]) {
   Log.traceln(F("writeRelayData nr: %d %T" CR), relay, boolValue);
   registers[relay] = boolValue;
   registersDouble[relay] = doubleValue;

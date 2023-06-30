@@ -12,6 +12,8 @@ SwitchDevice::SwitchDevice() {
 
   for (int i = NR_OF_RELAYS - 1; i >= 0; i--) {
     registers[i] = false;
+    channelNames[i] = "";
+    channelDesc[i] = "";
   }
   _device->writeRelayData(0, false, 0.0, registers, registersDouble);
 }

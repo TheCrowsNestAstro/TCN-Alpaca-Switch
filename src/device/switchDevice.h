@@ -20,8 +20,8 @@ class SwitchDevice
         bool connected = false;
         String uniqueID = "";
 
-        String channelNames[NR_OF_RELAYS] = {"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""};
-        String channelDesc[NR_OF_RELAYS] = {"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""};
+        String channelNames[NR_OF_RELAYS];
+        String channelDesc[NR_OF_RELAYS];
         //bool relayStateBool[NR_OF_RELAYS] = {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
         //double relayStateValue[NR_OF_RELAYS] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,};
 
