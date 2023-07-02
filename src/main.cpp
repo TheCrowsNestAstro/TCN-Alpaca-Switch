@@ -396,9 +396,11 @@ void loop()
   CheckForDiscovery();
 
   // MQTT
+#if MQTT_ENABLED
   if (!client.connected()) {
     reconnect();
   }
+#endif
   client.loop();
 
   MDNS.update();

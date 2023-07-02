@@ -1,7 +1,7 @@
 #pragma once
 #include "Constants.hpp"
 
-//#define ESP32
+#define MQTT_ENABLED FALSE
 
 #define SERVER_NAME "TCN"
 #define MANUFACTURER "Christian Kardach"
@@ -32,4 +32,4 @@
 #define RELAY_LATCH_PIN 12
 #define RELAY_CLOCK_PIN 13
 #define RELAY_OE_PIN 5
-const int RELAY_PINS[] = {8, 7, 6, 5, 0};
+const int RELAY_PINS[] = {15, 13, 12, 14, 16};
