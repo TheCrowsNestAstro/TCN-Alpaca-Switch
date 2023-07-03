@@ -12,7 +12,7 @@
 #define BOARD BOARD_OPENASTROPOWERHUB
 
 #if BOARD == BOARD_OPENASTROPOWERHUB
-#define DEVICE_NAME "OpenAstroPowerHub"
+#define DEVICE_NAME "TCN Power Switch"
 #define DRIVER_INFO "OAPH Alpaca Driver"
 #define UNIQUE_CLIENT_ID "785d8e0c4af346208dcd9186a381d8d6" // https://www.guidgenerator.com/online-guid-generator.aspx
 #define NR_OF_RELAYS 5
