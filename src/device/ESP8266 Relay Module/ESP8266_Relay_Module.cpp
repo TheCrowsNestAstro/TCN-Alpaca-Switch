@@ -7,13 +7,13 @@ ESP8266_Relay_Module::ESP8266_Relay_Module() {
   pinMode(RELAY_OE_PIN, OUTPUT);
 }
 
-void ESP8266_Relay_Module::writeRelayData(int relay, int boolValue, double doubleValue, boolean (&registers)[NR_OF_RELAYS], double (&registersDouble)[NR_OF_RELAYS]) {
-  Log.traceln(F("writeRelayData nr: %d %T" CR), relay, boolValue);
-  registers[relay] = boolValue;
-  registersDouble[relay] = doubleValue;
+void ESP8266_Relay_Module::writeChannelData(int channel, int channelValue, double doubleValue, int (&registers)[NR_OF_CHANNELS], double (&registersDouble)[NR_OF_CHANNELS], int channelMin, int channelMax, int channelStep) {
+  Log.traceln(F("writeChannelData nr: %d %T" CR), channel, channelValue);
+  registers[channel] = (channelValue == channelMax) ? 1 : 0;
+  registersDouble[channel] = doubleValue;
 
   digitalWrite(RELAY_LATCH_PIN, LOW);
-  for (int i = NR_OF_RELAYS - 1; i >= 0; i--) {
+  for (int i = NR_OF_CHANNELS - 1; i >= 0; i--) {
     digitalWrite(RELAY_CLOCK_PIN, LOW);
     int val = registers[i];
     digitalWrite(RELAY_DATA_PIN, val);
@@ -21,6 +21,6 @@ void ESP8266_Relay_Module::writeRelayData(int relay, int boolValue, double doubl
   }
   digitalWrite(RELAY_LATCH_PIN, HIGH);
 
-  // relayStateBool[relay] = boolValue;
-  // relayStateValue[relay] = doubleValue;
+  // channelStateBool[channel] = (channelValue > 0) ? 1 : 0;
+  // channelStateValue[channel] = doubleValue;
 }

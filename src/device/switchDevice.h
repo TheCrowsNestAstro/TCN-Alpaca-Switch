@@ -20,16 +20,20 @@ class SwitchDevice
         bool connected = false;
         String uniqueID = "";
 
-        String channelNames[NR_OF_RELAYS];
-        String channelDesc[NR_OF_RELAYS];
-        //bool relayStateBool[NR_OF_RELAYS] = {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
-        //double relayStateValue[NR_OF_RELAYS] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,};
+        String channelNames[NR_OF_CHANNELS];
+        String channelDesc[NR_OF_CHANNELS];
+        int channelMin[NR_OF_CHANNELS];
+        int channelMax[NR_OF_CHANNELS];
+        int channelStep[NR_OF_CHANNELS];
 
-        void setRelayState(int idx, bool state);
-        void setRelayValue(int idx, double value);
+        //bool channelStateBool[NR_OF_CHANNELS] = {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
+        //double channelStateValue[NR_OF_CHANNELS] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,};
 
-        bool getRelayState(int idx);
-        double getRelayStateDouble(int idx);
+        void setChannelState(int idx, bool state);
+        void setChannelValue(int idx, double value);
+
+        bool getChannelState(int idx);
+        double getChannelStateDouble(int idx);
 
         void readEEPROM();
         void writeEEPROM();
@@ -43,9 +47,9 @@ class SwitchDevice
       #elif BOARD == BOARD_ESP8266_RELAY_MODULE
         ESP8266_Relay_Module *_device;
       #endif
-        void writeRelayData(int relay, int boolValue, double doubleValue);
-        //uint16_t relayData = 0b0000000000000000;
-        //byte relayData = B00000000;
-        boolean registers[NR_OF_RELAYS];
-        double registersDouble[NR_OF_RELAYS];
+        void writeChannelData(int relay, int channelValue, double doubleValue);
+        //uint16_t channelData = 0b0000000000000000;
+        //byte channelData = B00000000;
+        int registers[NR_OF_CHANNELS];
+        double registersDouble[NR_OF_CHANNELS];
 };

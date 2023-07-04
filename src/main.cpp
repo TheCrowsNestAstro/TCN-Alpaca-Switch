@@ -306,17 +306,17 @@ void handleRoot() {
   String result = index_html_header;
   result += "<table class=\"center\">";
 
-  for(int i=1; i<=NR_OF_RELAYS; i+=2){
-    String relayStateValue = "";
+  for(int i=1; i<=NR_OF_CHANNELS; i+=2){
+    String channelStateValue = "";
     if(device->getSwitchState(i-1) == true)
     {
-      relayStateValue = "checked";
+      channelStateValue = "checked";
     }
 
     result += "<tr class=\"tr-main\">";
     result += "<td class=\"td-first\">";
     result += "<label>";
-    result += "<input type=\"checkbox\" onchange=\"toggleCheckbox(this)\" id=\"" + String(i) + "\" "+ relayStateValue +">";
+    result += "<input type=\"checkbox\" onchange=\"toggleCheckbox(this)\" id=\"" + String(i) + "\" "+ channelStateValue +">";
     result += "<span class=\"slider\"></span>";
     result += "</label>";
     result += "</td>";
@@ -324,15 +324,15 @@ void handleRoot() {
     result += device->getSwitchName(i-1);
     result += "</td>";
 
-    relayStateValue = "";
+    channelStateValue = "";
     if(device->getSwitchState(i) == true)
     {
-      relayStateValue = "checked";
+      channelStateValue = "checked";
     }
 
     result += "<td class=\"td-second\">";
     result += "<label>";
-    result += "<input type=\"checkbox\" onchange=\"toggleCheckbox(this)\" id=\"" + String(i+1) + "\" "+ relayStateValue +">";
+    result += "<input type=\"checkbox\" onchange=\"toggleCheckbox(this)\" id=\"" + String(i+1) + "\" "+ channelStateValue +">";
     result += "<span class=\"slider\"></span>";
     result += "</label>";
     result += "</td>";
@@ -365,7 +365,7 @@ void handleEdit()
   String result = edit_html_header;
   result += "<form action=\"/rename\" method=\"POST\">";
 
-  for(int i=1; i<=NR_OF_RELAYS; i++){
+  for(int i=1; i<=NR_OF_CHANNELS; i++){
     result += "<label for=\"ch"+String(i)+"\">Channel "+String(i)+"</label>";
     result += "<input type=\"text\" id=\"ch"+String(i)+"\" name=\"ch" + String(i) + "\" placeholder=\"Channel 1..\" value=\""+device->getSwitchName(i-1)+"\">";
   }
@@ -377,7 +377,7 @@ void handleEdit()
 
 void handleRename()
 {
-  for(int i=1; i<=NR_OF_RELAYS; i++){
+  for(int i=1; i<=NR_OF_CHANNELS; i++){
     String chName = webServer.arg("ch"+String(i));
     Log.traceln(F("Name: %c" CR), chName.c_str());
     device->setSwitchName(i-1, chName);

@@ -10,12 +10,15 @@ SwitchDevice::SwitchDevice() {
   // readEEPROM();
   // writeEEPROM(); // FIRST TIME UNCOMMENT
 
-  for (int i = NR_OF_RELAYS - 1; i >= 0; i--) {
-    registers[i] = false;
-    channelNames[i] = "";
-    channelDesc[i] = "";
+  for (int channel = NR_OF_CHANNELS - 1; channel >= 0; channel--) {
+    registers[channel] = 0;
+    channelNames[channel] = "";
+    channelDesc[channel] = "";
+    channelMin[channel] = channelMinDefault[channel];
+    channelMax[channel] = channelMaxDefault[channel];
+    channelStep[channel] = channelStepDefault[channel];
+    _device->writeChannelData(0, 0, 0.0, registers, registersDouble, channelMin[channel], channelMax[channel], channelStep[channel]);
   }
-  _device->writeRelayData(0, false, 0.0, registers, registersDouble);
 }
 
 void SwitchDevice::readEEPROM()
@@ -23,7 +26,7 @@ void SwitchDevice::readEEPROM()
     Log.traceln("readEEPROM called");
     EEPROM.begin(EEPROM_SIZE);
     int address = 0;
-    for(int i = 0; i < NR_OF_RELAYS; i++)
+    for(int i = 0; i < NR_OF_CHANNELS; i++)
     {
         String channelName;
         EEPROM.get(address, channelName);
@@ -38,7 +41,7 @@ void SwitchDevice::writeEEPROM()
 {
     EEPROM.begin(EEPROM_SIZE);
     int address = 0;
-    for(int i = 0; i < NR_OF_RELAYS; i++)
+    for(int i = 0; i < NR_OF_CHANNELS; i++)
     {
         EEPROM.put(address, channelNames[i]);
         address += sizeof(channelNames[i]); //update address value
@@ -46,46 +49,46 @@ void SwitchDevice::writeEEPROM()
     EEPROM.commit();
 }
 
-void SwitchDevice::writeRelayData(int relay, int boolValue, double doubleValue) {
-  _device->writeRelayData(relay, boolValue, doubleValue, registers, registersDouble);
+void SwitchDevice::writeChannelData(int channel, int channelValue, double doubleValue) {
+  _device->writeChannelData(channel, channelValue, doubleValue, registers, registersDouble, channelMin[channel], channelMax[channel], channelStep[channel]);
 }
 
 
-void SwitchDevice::setRelayState(int idx, bool state)
+void SwitchDevice::setChannelState(int idx, bool state)
 {
-    Log.traceln(F("Relay nr: %d %T" CR), idx, state);
+    Log.traceln(F("Channel nr: %d %T" CR), idx, state);
     
     if(state == 1)
     {
-        writeRelayData(idx, true, 1.0);
+        writeChannelData(idx, true, 1.0);
     }
     else {
-        writeRelayData(idx, false, 0.0);
+        writeChannelData(idx, false, 0.0);
     }
     
 }
 
-void SwitchDevice::setRelayValue(int idx, double value)
+void SwitchDevice::setChannelValue(int idx, double value)
 {
-    Log.traceln(F("Relay nr: %d %D" CR), idx, value);
+    Log.traceln(F("Channel nr: %d %D" CR), idx, value);
     
     if(value > 0.0)
     {
-        writeRelayData(idx, true, 1.0);
+        writeChannelData(idx, true, 1.0);
         
     }
     else {
-        writeRelayData(idx, false, 0.0);
+        writeChannelData(idx, false, 0.0);
     }
     
 }
 
-bool SwitchDevice::getRelayState(int idx)
+bool SwitchDevice::getChannelState(int idx)
 {
     return registers[idx];
 }
 
-double SwitchDevice::getRelayStateDouble(int idx)
+double SwitchDevice::getChannelStateDouble(int idx)
 {
     return registersDouble[idx];
 }
@@ -98,7 +101,7 @@ String SwitchDevice::getSwitchState()
 
     JsonArray array = doc.createNestedArray("switches");
 
-    for(int i = 0; i < NR_OF_RELAYS; i++)
+    for(int i = 0; i < NR_OF_CHANNELS; i++)
     {
         doc2["name"] = channelNames[i];
         doc2["value"] = String(registers[i]);

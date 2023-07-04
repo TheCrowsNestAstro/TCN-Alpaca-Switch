@@ -1,16 +1,22 @@
 #include "device\OpenAstroPowerHub\OpenAstroPowerHub.h"
 
 OpenAstroPowerHub::OpenAstroPowerHub() {
-  for (int i = NR_OF_RELAYS - 1; i >= 0; i--) {
-    pinMode(RELAY_PINS[i], OUTPUT);
+  for (int i = NR_OF_CHANNELS - 1; i >= 0; i--) {
+    pinMode(CHANNEL_PINS[i], OUTPUT);
   }
   
 }
 
-void OpenAstroPowerHub::writeRelayData(int relay, int boolValue, double doubleValue, boolean (&registers)[NR_OF_RELAYS], double (&registersDouble)[NR_OF_RELAYS]) {
-  Log.traceln(F("writeRelayData nr: %d %T" CR), relay, boolValue);
-  registers[relay] = boolValue;
-  registersDouble[relay] = doubleValue;
+void OpenAstroPowerHub::writeChannelData(int channel, int channelValue, double doubleValue, int (&registers)[NR_OF_CHANNELS], double (&registersDouble)[NR_OF_CHANNELS], int channelMin, int channelMax, int channelStep) {
+  Log.traceln(F("writeChannelData nr: %d %T" CR), channel, channelValue);
 
-  digitalWrite(RELAY_PINS[relay], boolValue);
+  if (channelMax == 1 && channelValue == 1){
+      // If channelMax = 1, assume binary output
+      digitalWrite(CHANNEL_PINS[channel], channelValue);
+  } else if (channelMax > 1){
+      // Normalize channelValue between 0-255 and output as PWM
+      analogWrite(CHANNEL_PINS[channel], ((channelValue - channelMin) / (channelMax)) * 255);
+  }
+  registers[channel] = channelValue;
+  registersDouble[channel] = doubleValue;
 }

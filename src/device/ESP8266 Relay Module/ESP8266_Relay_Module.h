@@ -7,5 +7,5 @@
 class ESP8266_Relay_Module {
 public:
   ESP8266_Relay_Module();
-  void writeRelayData(int relay, int boolValue, double doubleValue, boolean (&registers)[NR_OF_RELAYS], double (&registersDouble)[NR_OF_RELAYS]);
+  void writeChannelData(int channel, int channelValue, double doubleValue, int (&registers)[NR_OF_CHANNELS], double (&registersDouble)[NR_OF_CHANNELS], int channelMin, int channelMax, int channelStep);
 };

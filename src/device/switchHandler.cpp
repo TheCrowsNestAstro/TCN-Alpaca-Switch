@@ -438,7 +438,7 @@ void SwitchHandler::handlerDriver0Maxswitch()
     
     clientID = (uint32_t)_server->arg("ClientID").toInt();
     transID = (uint32_t)_server->arg("ClientTransactionID").toInt();
-    returnIntValue(NR_OF_RELAYS, "", 0);
+    returnIntValue(NR_OF_CHANNELS, "", 0);
 }
 
 void SwitchHandler::handlerDriver0CanWrite()
@@ -477,14 +477,14 @@ void SwitchHandler::handlerDriver0SwitchState()
     {
         Log.traceln("GET SwitchState called");
 
-        returnBoolValue(switchDevice->getRelayState(id), "", 0);
+        returnBoolValue(switchDevice->getChannelState(id), "", 0);
     }
     else if (_server->method() == HTTP_PUT)
     {
         Log.traceln("PUT SwitchState called");
         bool val = (bool)_server->arg("State");
 
-        switchDevice->setRelayState(id, val);
+        switchDevice->setChannelState(id, val);
         returnEmpty("", 0);
     }
 }
@@ -513,7 +513,7 @@ void SwitchHandler::handlerDriver0SwitchValue()
     if (_server->method() == HTTP_GET)
     {
         Log.traceln("GET SwitchValue called");
-        returnDoubleValue(switchDevice->getRelayStateDouble(id), "", 0);
+        returnDoubleValue(switchDevice->getChannelStateDouble(id), "", 0);
         
     }
     else if (_server->method() == HTTP_PUT)
@@ -521,7 +521,7 @@ void SwitchHandler::handlerDriver0SwitchValue()
         Log.traceln("PUT SwitchValue called");
         double val = (double)_server->arg("Value").toDouble();
         
-        switchDevice->setRelayValue(id, val);
+        switchDevice->setChannelValue(id, val);
         returnEmpty("", 0);
     }
 
@@ -535,9 +535,9 @@ void SwitchHandler::handlerDriver0MinSwitchValue()
     clientID = (uint32_t)_server->arg("ClientID").toInt();
     transID = (uint32_t)_server->arg("ClientTransactionID").toInt();
     // u_int32_t deviceNumber = (uint32_t)_server->arg("device_number").toInt();
-    // u_int32_t id = (uint32_t)_server->arg("ID").toInt();
+    u_int32_t id = (uint32_t)_server->arg("ID").toInt();
     
-    returnDoubleValue(0.0, "", 0);
+    returnDoubleValue(switchDevice->channelMin[id], "", 0);
 }
 
 void SwitchHandler::handlerDriver0MaxSwitchValue()
@@ -547,9 +547,9 @@ void SwitchHandler::handlerDriver0MaxSwitchValue()
     clientID = (uint32_t)_server->arg("ClientID").toInt();
     transID = (uint32_t)_server->arg("ClientTransactionID").toInt();
     // u_int32_t deviceNumber = (uint32_t)_server->arg("device_number").toInt();
-    // u_int32_t id = (uint32_t)_server->arg("ID").toInt();
+    u_int32_t id = (uint32_t)_server->arg("ID").toInt();
     
-    returnDoubleValue(1.0, "", 0);
+    returnDoubleValue(switchDevice->channelMax[id], "", 0);
 }
 
 void SwitchHandler::handlerDriver0SwitchStep()
@@ -559,9 +559,9 @@ void SwitchHandler::handlerDriver0SwitchStep()
     clientID = (uint32_t)_server->arg("ClientID").toInt();
     transID = (uint32_t)_server->arg("ClientTransactionID").toInt();
     // u_int32_t deviceNumber = (uint32_t)_server->arg("device_number").toInt();
-    // u_int32_t id = (uint32_t)_server->arg("ID").toInt();
+    u_int32_t id = (uint32_t)_server->arg("ID").toInt();
     
-    returnDoubleValue(1.0, "", 0);
+    returnDoubleValue(switchDevice->channelStep[id], "", 0);
 }
 
 //***********************************************
@@ -569,12 +569,12 @@ void SwitchHandler::handlerDriver0SwitchStep()
 //***********************************************
 bool SwitchHandler::getSwitchState(int id)
 {
-    return switchDevice->getRelayState(id);
+    return switchDevice->getChannelState(id);
 }
 
 void SwitchHandler::setSwitchState(int id, bool state)
 {
-    switchDevice->setRelayState(id, state);
+    switchDevice->setChannelState(id, state);
 }
 
 String SwitchHandler::getSwitchName(int id)
