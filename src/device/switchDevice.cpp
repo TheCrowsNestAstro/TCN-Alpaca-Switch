@@ -10,8 +10,6 @@ SwitchDevice::SwitchDevice() {
   // readEEPROM();
   // writeEEPROM(); // FIRST TIME UNCOMMENT
 
-  for (int channel = NR_OF_CHANNELS - 1; channel >= 0; channel--) {
-    registers[channel] = 0;
   for (int id = NR_OF_CHANNELS - 1; id >= 0; id--) {
     channels[id].value = 0;
     channels[id].name = "";
@@ -19,6 +17,7 @@ SwitchDevice::SwitchDevice() {
     channels[id].min = channelMinDefault[id];
     channels[id].max = channelMaxDefault[id];
     channels[id].step = channelStepDefault[id];
+    _device->writeChannelData(0, 0.0, channels);
   }
 }
 
