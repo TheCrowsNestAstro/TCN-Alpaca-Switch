@@ -1,5 +1,5 @@
 #include "device\switchHandler.h"
-
+#include "device\struct.h"
 
 SwitchHandler::SwitchHandler(ESP8266WebServer *server)
 {
@@ -26,134 +26,9 @@ void SwitchHandler::incrementServerTransID()
     serverTransactionID++;
 }
 
-void SwitchHandler::returnEmpty(String errMsg, int errNr)
-{
-    incrementServerTransID();
-    DynamicJsonDocument doc(1024);
-
-    doc["ErrorMessage"] = errMsg;
-    doc["ErrorNumber"] = errNr;
-    doc["ClientTransactionID"] = transID;
-    doc["ServerTransactionID"] = serverTransactionID;
-
-    String output;
-    serializeJson(doc, output);
-    Log.traceln(F("Returning: %s" CR), output.c_str());
-
-    _server->send(200, "text/json", output);
-}
-
-void SwitchHandler::returnBoolValue(bool val, String errMsg, int errNr)
-{
-    incrementServerTransID();
-    DynamicJsonDocument doc(1024);
-
-    doc["Value"] = val;
-    doc["ErrorMessage"] = errMsg;
-    doc["ErrorNumber"] = errNr;
-    doc["ClientTransactionID"] = transID;
-    doc["ServerTransactionID"] = serverTransactionID;
-
-    String output;
-    serializeJson(doc, output);
-    Log.traceln(F("Returning: %s" CR), output.c_str());
-
-    _server->send(200, "text/json", output);
-}
-
-void SwitchHandler::returnStringValue(String val, String errMsg, int errNr)
-{
-    incrementServerTransID();
-    DynamicJsonDocument doc(1024);
-
-    doc["Value"] = val;
-    doc["ErrorMessage"] = errMsg;
-    doc["ErrorNumber"] = errNr;
-    doc["ClientTransactionID"] = transID;
-    doc["ServerTransactionID"] = serverTransactionID;
-
-    String output;
-    serializeJson(doc, output);
-    Log.traceln(F("Returning: %s" CR), output.c_str());
-
-    _server->send(200, "text/json", output);
-}
-
-void SwitchHandler::returnIntValue(int val, String errMsg, int errNr)
-{
-    incrementServerTransID();
-    DynamicJsonDocument doc(1024);
-
-    doc["Value"] = val;
-    doc["ErrorMessage"] = errMsg;
-    doc["ErrorNumber"] = errNr;
-    doc["ClientTransactionID"] = transID;
-    doc["ServerTransactionID"] = serverTransactionID;
-
-    String output;
-    serializeJson(doc, output);
-    Log.traceln(F("Returning: %s" CR), output.c_str());
-
-    _server->send(200, "text/json", output);
-}
-
-void SwitchHandler::returnFloatValue(float val, String errMsg, int errNr)
-{
-    incrementServerTransID();
-    DynamicJsonDocument doc(1024);
-
-    doc["Value"] = val;
-    doc["ErrorMessage"] = errMsg;
-    doc["ErrorNumber"] = errNr;
-    doc["ClientTransactionID"] = transID;
-    doc["ServerTransactionID"] = serverTransactionID;
-
-    String output;
-    serializeJson(doc, output);
-    Log.traceln(F("Returning: %s" CR), output.c_str());
-
-    _server->send(200, "text/json", output);
-}
-
-void SwitchHandler::returnJsonArrayValue(JsonArray val, String errMsg, int errNr)
-{
-    incrementServerTransID();
-    DynamicJsonDocument doc(1024);
-
-    doc["Value"] = val;
-    doc["ErrorMessage"] = errMsg;
-    doc["ErrorNumber"] = errNr;
-    doc["ClientTransactionID"] = transID;
-    doc["ServerTransactionID"] = serverTransactionID;
-
-    String output;
-    serializeJson(doc, output);
-    Log.traceln(F("Returning: %s" CR), output.c_str());
-
-    _server->send(200, "text/json", output);
-}
-
-void SwitchHandler::returnDoubleValue(double val, String errMsg, int errNr)
-{
-    incrementServerTransID();
-    DynamicJsonDocument doc(1024);
-
-    doc["Value"] = val;
-    doc["ErrorMessage"] = errMsg;
-    doc["ErrorNumber"] = errNr;
-    doc["ClientTransactionID"] = transID;
-    doc["ServerTransactionID"] = serverTransactionID;
-
-    String output;
-    serializeJson(doc, output);
-    Log.traceln(F("Returning: %s" CR), output.c_str());
-
-    _server->send(200, "text/json", output);
-}
-/*
- * ALPACA DEVICE MANAGEMENT
- */
-
+/**************************************************************
+ * ASCOM Alpaca Management API - Management Interface Methods *
+ **************************************************************/
 void SwitchHandler::handlerMgmtVersions()
 {
     Log.traceln("handlerMgmtVersions called...");
@@ -267,6 +142,82 @@ void SwitchHandler::handlerMgmtConfiguredDevices()
     }
 }
 
+/*****************************************************************
+ * ASCOM Alpaca Device API - ASCOM Methods Common To All Devices *
+ *****************************************************************/
+void SwitchHandler::handleAction()
+{
+    Log.traceln("handleAction called");
+
+    clientID = (uint32_t)_server->arg("ClientID").toInt();
+    transID = (uint32_t)_server->arg("ClientTransactionID").toInt();
+
+    String deviceType = _server->arg("device_type");
+    //u_int32_t deviceNumber = (uint32_t)_server->arg("device_number").toInt();
+
+    String action = _server->arg("Action");
+    String parameters = _server->arg("Parameters");
+
+    returnStringValue("ok", "", 0);
+}
+
+void SwitchHandler::handleCommandBlind()
+{
+    Log.traceln("handleCommandBlind called");
+
+    clientID = (uint32_t)_server->arg("ClientID").toInt();
+    transID = (uint32_t)_server->arg("ClientTransactionID").toInt();
+
+    String deviceType = _server->arg("device_type");
+    u_int32_t deviceNumber = (uint32_t)_server->arg("device_number").toInt();
+
+    String command = _server->arg("Command");
+    String raw = _server->arg("Raw");
+
+    Log.traceln("%s" CR, command);
+    Log.traceln("%s" CR, raw);
+
+    returnEmpty("", 0);
+}
+
+void SwitchHandler::handleCommandBool()
+{
+    Log.traceln("handleCommandBool called");
+
+    clientID = (uint32_t)_server->arg("ClientID").toInt();
+    transID = (uint32_t)_server->arg("ClientTransactionID").toInt();
+
+    String deviceType = _server->arg("device_type");
+    u_int32_t deviceNumber = (uint32_t)_server->arg("device_number").toInt();
+
+    String command = _server->arg("Command");
+    String raw = _server->arg("Raw");
+
+    Log.traceln("%s" CR, command);
+    Log.traceln("%s" CR, raw);
+
+    returnBoolValue(true, "", 0);
+}
+
+void SwitchHandler::handleCommandString()
+{
+    Log.traceln("handleCommandBool called");
+
+    clientID = (uint32_t)_server->arg("ClientID").toInt();
+    transID = (uint32_t)_server->arg("ClientTransactionID").toInt();
+
+    String deviceType = _server->arg("device_type");
+    u_int32_t deviceNumber = (uint32_t)_server->arg("device_number").toInt();
+
+    String command = _server->arg("Command");
+    String raw = _server->arg("Raw");
+
+    Log.traceln("%s" CR, command.c_str());
+    Log.traceln("%s" CR, raw.c_str());
+
+    returnStringValue("ok", "", 0);
+}
+
 void SwitchHandler::handlerConnected()
 {
     Log.traceln("handlerConnected called");
@@ -296,9 +247,6 @@ void SwitchHandler::handlerConnected()
     }
 }
 
-/***********************************
- * ASCOM STANDARD
- **********************************/
 void SwitchHandler::handlerDescriptionGet()
 {
     Log.traceln("handlerDescriptionGet called");
@@ -356,88 +304,16 @@ void SwitchHandler::handlerSupportedActionsGet()
     
 }
 
-void SwitchHandler::handleAction()
-{
-    Log.traceln("handleAction called");
-
-    clientID = (uint32_t)_server->arg("ClientID").toInt();
-    transID = (uint32_t)_server->arg("ClientTransactionID").toInt();
-
-    String deviceType = _server->arg("device_type");
-    //u_int32_t deviceNumber = (uint32_t)_server->arg("device_number").toInt();
-
-    String action = _server->arg("Action");
-    String parameters = _server->arg("Parameters");
-
-    returnStringValue("ok", "", 0);
-}
-
-void SwitchHandler::handleCommandBlind()
-{
-    Log.traceln("handleCommandBlind called");
-
-    clientID = (uint32_t)_server->arg("ClientID").toInt();
-    transID = (uint32_t)_server->arg("ClientTransactionID").toInt();
-
-    String deviceType = _server->arg("device_type");
-    // u_int32_t deviceNumber = (uint32_t)_server->arg("device_number").toInt();
-
-    String command = _server->arg("Command");
-    String raw = _server->arg("Raw");
-
-    Log.traceln("%s" CR, command);
-    Log.traceln("%s" CR, raw);
-
-    returnEmpty("", 0);
-}
-
-void SwitchHandler::handleCommandBool()
-{
-    Log.traceln("handleCommandBool called");
-
-    clientID = (uint32_t)_server->arg("ClientID").toInt();
-    transID = (uint32_t)_server->arg("ClientTransactionID").toInt();
-
-    String deviceType = _server->arg("device_type");
-    // u_int32_t deviceNumber = (uint32_t)_server->arg("device_number").toInt();
-
-    String command = _server->arg("Command");
-    String raw = _server->arg("Raw");
-
-    Log.traceln("%s" CR, command);
-    Log.traceln("%s" CR, raw);
-
-    returnBoolValue(true, "", 0);
-}
-
-void SwitchHandler::handleCommandString()
-{
-    Log.traceln("handleCommandBool called");
-
-    clientID = (uint32_t)_server->arg("ClientID").toInt();
-    transID = (uint32_t)_server->arg("ClientTransactionID").toInt();
-
-    String deviceType = _server->arg("device_type");
-    // u_int32_t deviceNumber = (uint32_t)_server->arg("device_number").toInt();
-
-    String command = _server->arg("Command");
-    String raw = _server->arg("Raw");
-
-    Log.traceln("%s" CR, command.c_str());
-    Log.traceln("%s" CR, raw.c_str());
-
-    returnStringValue("ok", "", 0);
-}
-
-/***********************************
- * ASCOM SWITCH
- **********************************/
+/*****************************************************
+ * ASCOM Alpaca Device API - Switch Specific Methods *
+ *****************************************************/
 void SwitchHandler::handlerDriver0Maxswitch()
 {
     Log.traceln("handlerDriver0Maxswitch called");
     
     clientID = (uint32_t)_server->arg("ClientID").toInt();
     transID = (uint32_t)_server->arg("ClientTransactionID").toInt();
+    u_int32_t deviceNumber = (uint32_t)_server->arg("device_number").toInt();
     returnIntValue(NR_OF_CHANNELS, "", 0);
 }
 
@@ -447,22 +323,10 @@ void SwitchHandler::handlerDriver0CanWrite()
 
     clientID = (uint32_t)_server->arg("ClientID").toInt();
     transID = (uint32_t)_server->arg("ClientTransactionID").toInt();
-    // u_int32_t deviceNumber = (uint32_t)_server->arg("device_number").toInt();
-    // u_int32_t id = (uint32_t)_server->arg("ID").toInt();
-    
-    returnBoolValue(true, "", 0);
-}
-
-void SwitchHandler::handlerDriver0SwitchDescription()
-{
-    Log.traceln("handlerDriver0SwitchDescription called");
-
-    clientID = (uint32_t)_server->arg("ClientID").toInt();
-    transID = (uint32_t)_server->arg("ClientTransactionID").toInt();
-    // u_int32_t deviceNumber = (uint32_t)_server->arg("device_number").toInt();
+    u_int32_t deviceNumber = (uint32_t)_server->arg("device_number").toInt();
     u_int32_t id = (uint32_t)_server->arg("ID").toInt();
     
-    returnStringValue(switchDevice->channelDesc[id], "", 0);
+    returnBoolValue(true, "", 0);
 }
 
 void SwitchHandler::handlerDriver0SwitchState()
@@ -471,22 +335,35 @@ void SwitchHandler::handlerDriver0SwitchState()
 
     clientID = (uint32_t)_server->arg("ClientID").toInt();
     transID = (uint32_t)_server->arg("ClientTransactionID").toInt();
+    u_int32_t deviceNumber = (uint32_t)_server->arg("device_number").toInt();
     u_int32_t id = (uint32_t)_server->arg("ID").toInt();
 
     if (_server->method() == HTTP_GET)
     {
         Log.traceln("GET SwitchState called");
 
-        returnBoolValue(switchDevice->getChannelState(id), "", 0);
+        returnBoolValue(switchDevice->getSwitchState(id), "", 0);
     }
     else if (_server->method() == HTTP_PUT)
     {
         Log.traceln("PUT SwitchState called");
         bool val = (bool)_server->arg("State");
 
-        switchDevice->setChannelState(id, val);
+        switchDevice->setSwitchState(id, val);
         returnEmpty("", 0);
     }
+}
+
+void SwitchHandler::handlerDriver0SwitchDescription()
+{
+    Log.traceln("handlerDriver0SwitchDescription called");
+
+    clientID = (uint32_t)_server->arg("ClientID").toInt();
+    transID = (uint32_t)_server->arg("ClientTransactionID").toInt();
+    u_int32_t deviceNumber = (uint32_t)_server->arg("device_number").toInt();
+    u_int32_t id = (uint32_t)_server->arg("ID").toInt();
+    
+    returnStringValue(switchDevice->getSwitchDesc(id), "", 0);
 }
 
 void SwitchHandler::handlerDriver0SwitchName()
@@ -497,7 +374,7 @@ void SwitchHandler::handlerDriver0SwitchName()
     transID = (uint32_t)_server->arg("ClientTransactionID").toInt();
     u_int32_t id = (uint32_t)_server->arg("ID").toInt();
 
-    returnStringValue(switchDevice->channelNames[id], "", 0);
+    returnStringValue(switchDevice->getSwitchName(id), "", 0);
 }
 
 void SwitchHandler::handlerDriver0SwitchValue()
@@ -513,7 +390,7 @@ void SwitchHandler::handlerDriver0SwitchValue()
     if (_server->method() == HTTP_GET)
     {
         Log.traceln("GET SwitchValue called");
-        returnDoubleValue(switchDevice->getChannelStateDouble(id), "", 0);
+        returnDoubleValue(switchDevice->getSwitchValue(id), "", 0);
         
     }
     else if (_server->method() == HTTP_PUT)
@@ -521,7 +398,7 @@ void SwitchHandler::handlerDriver0SwitchValue()
         Log.traceln("PUT SwitchValue called");
         double val = (double)_server->arg("Value").toDouble();
         
-        switchDevice->setChannelValue(id, val);
+        switchDevice->setSwitchValue(id, val);
         returnEmpty("", 0);
     }
 
@@ -537,7 +414,7 @@ void SwitchHandler::handlerDriver0MinSwitchValue()
     // u_int32_t deviceNumber = (uint32_t)_server->arg("device_number").toInt();
     u_int32_t id = (uint32_t)_server->arg("ID").toInt();
     
-    returnDoubleValue(switchDevice->channelMin[id], "", 0);
+    returnDoubleValue(switchDevice->getSwitchMin(id), "", 0);
 }
 
 void SwitchHandler::handlerDriver0MaxSwitchValue()
@@ -549,7 +426,7 @@ void SwitchHandler::handlerDriver0MaxSwitchValue()
     // u_int32_t deviceNumber = (uint32_t)_server->arg("device_number").toInt();
     u_int32_t id = (uint32_t)_server->arg("ID").toInt();
     
-    returnDoubleValue(switchDevice->channelMax[id], "", 0);
+    returnDoubleValue(switchDevice->getSwitchMax(id), "", 0);
 }
 
 void SwitchHandler::handlerDriver0SwitchStep()
@@ -561,30 +438,30 @@ void SwitchHandler::handlerDriver0SwitchStep()
     // u_int32_t deviceNumber = (uint32_t)_server->arg("device_number").toInt();
     u_int32_t id = (uint32_t)_server->arg("ID").toInt();
     
-    returnDoubleValue(switchDevice->channelStep[id], "", 0);
+    returnDoubleValue(switchDevice->getSwitchStep(id), "", 0);
 }
 
-//***********************************************
-//          CUSTOM HANDLERS
-//***********************************************
-bool SwitchHandler::getSwitchState(int id)
+/***********************************************
+          Custom handlers for webpage
+***********************************************/
+bool SwitchHandler::getSwitchState(uint32_t id)
 {
-    return switchDevice->getChannelState(id);
+    return switchDevice->getSwitchState(id);
 }
 
-void SwitchHandler::setSwitchState(int id, bool state)
+void SwitchHandler::setSwitchState(uint32_t id, bool state)
 {
-    switchDevice->setChannelState(id, state);
+    switchDevice->setSwitchState(id, state);
 }
 
-String SwitchHandler::getSwitchName(int id)
+String SwitchHandler::getSwitchName(uint32_t id)
 {
-    return switchDevice->channelNames[id];
+    return switchDevice->getSwitchName(id);
 }
 
-void SwitchHandler::setSwitchName(int id, String name)
+void SwitchHandler::setSwitchName(uint32_t id, String name)
 {
-    switchDevice->channelNames[id] = name;
+    switchDevice->setSwitchName(id, name);
 }
 
 void SwitchHandler::storeEEPROM()
@@ -595,4 +472,132 @@ void SwitchHandler::storeEEPROM()
 String SwitchHandler::getSwitchState()
 {
     return switchDevice->getSwitchState();
+}
+
+/*********************************************
+          Handler Return Methods
+*********************************************/
+void SwitchHandler::returnEmpty(String errMsg, int errNr)
+{
+    incrementServerTransID();
+    DynamicJsonDocument doc(1024);
+
+    doc["ErrorMessage"] = errMsg;
+    doc["ErrorNumber"] = errNr;
+    doc["ClientTransactionID"] = transID;
+    doc["ServerTransactionID"] = serverTransactionID;
+
+    String output;
+    serializeJson(doc, output);
+    Log.traceln(F("Returning: %s" CR), output.c_str());
+
+    _server->send(200, "text/json", output);
+}
+
+void SwitchHandler::returnStringValue(String val, String errMsg, int errNr)
+{
+    incrementServerTransID();
+    DynamicJsonDocument doc(1024);
+
+    doc["Value"] = val;
+    doc["ErrorMessage"] = errMsg;
+    doc["ErrorNumber"] = errNr;
+    doc["ClientTransactionID"] = transID;
+    doc["ServerTransactionID"] = serverTransactionID;
+
+    String output;
+    serializeJson(doc, output);
+    Log.traceln(F("Returning: %s" CR), output.c_str());
+
+    _server->send(200, "text/json", output);
+}
+
+void SwitchHandler::returnBoolValue(bool val, String errMsg, int errNr)
+{
+    incrementServerTransID();
+    DynamicJsonDocument doc(1024);
+
+    doc["Value"] = val;
+    doc["ErrorMessage"] = errMsg;
+    doc["ErrorNumber"] = errNr;
+    doc["ClientTransactionID"] = transID;
+    doc["ServerTransactionID"] = serverTransactionID;
+
+    String output;
+    serializeJson(doc, output);
+    Log.traceln(F("Returning: %s" CR), output.c_str());
+
+    _server->send(200, "text/json", output);
+}
+
+void SwitchHandler::returnIntValue(uint32_t val, String errMsg, int errNr)
+{
+    incrementServerTransID();
+    DynamicJsonDocument doc(1024);
+
+    doc["Value"] = val;
+    doc["ErrorMessage"] = errMsg;
+    doc["ErrorNumber"] = errNr;
+    doc["ClientTransactionID"] = transID;
+    doc["ServerTransactionID"] = serverTransactionID;
+
+    String output;
+    serializeJson(doc, output);
+    Log.traceln(F("Returning: %s" CR), output.c_str());
+
+    _server->send(200, "text/json", output);
+}
+
+void SwitchHandler::returnFloatValue(float val, String errMsg, int errNr)
+{
+    incrementServerTransID();
+    DynamicJsonDocument doc(1024);
+
+    doc["Value"] = val;
+    doc["ErrorMessage"] = errMsg;
+    doc["ErrorNumber"] = errNr;
+    doc["ClientTransactionID"] = transID;
+    doc["ServerTransactionID"] = serverTransactionID;
+
+    String output;
+    serializeJson(doc, output);
+    Log.traceln(F("Returning: %s" CR), output.c_str());
+
+    _server->send(200, "text/json", output);
+}
+
+void SwitchHandler::returnJsonArrayValue(JsonArray val, String errMsg, int errNr)
+{
+    incrementServerTransID();
+    DynamicJsonDocument doc(1024);
+
+    doc["Value"] = val;
+    doc["ErrorMessage"] = errMsg;
+    doc["ErrorNumber"] = errNr;
+    doc["ClientTransactionID"] = transID;
+    doc["ServerTransactionID"] = serverTransactionID;
+
+    String output;
+    serializeJson(doc, output);
+    Log.traceln(F("Returning: %s" CR), output.c_str());
+
+    _server->send(200, "text/json", output);
+}
+
+void SwitchHandler::returnDoubleValue(double val, String errMsg, int errNr)
+{
+    incrementServerTransID();
+    DynamicJsonDocument doc(1024);
+
+    doc["Value"] = val;
+    doc["ErrorMessage"] = errMsg;
+    doc["ErrorNumber"] = errNr;
+    doc["ClientTransactionID"] = transID;
+    doc["ServerTransactionID"] = serverTransactionID;
+
+    String output;
+    serializeJson(doc, output);
+    Log.traceln(F("Returning: %s" CR), output.c_str());
+
+    _server->send(200, "text/json", output);
 }

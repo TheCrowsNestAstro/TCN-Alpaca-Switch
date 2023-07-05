@@ -5,6 +5,7 @@
 #include <ArduinoLog.h>
 #include "configuration.hpp"
 #include <ArduinoJson.h>
+#include "struct.h"
 
 #if BOARD == BOARD_OPENASTROPOWERHUB
 #include "device\OpenAstroPowerHub\OpenAstroPowerHub.h"
@@ -20,36 +21,28 @@ class SwitchDevice
         bool connected = false;
         String uniqueID = "";
 
-        String channelNames[NR_OF_CHANNELS];
-        String channelDesc[NR_OF_CHANNELS];
-        int channelMin[NR_OF_CHANNELS];
-        int channelMax[NR_OF_CHANNELS];
-        int channelStep[NR_OF_CHANNELS];
-
-        //bool channelStateBool[NR_OF_CHANNELS] = {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
-        //double channelStateValue[NR_OF_CHANNELS] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,};
-
-        void setChannelState(int idx, bool state);
-        void setChannelValue(int idx, double value);
-
-        bool getChannelState(int idx);
-        double getChannelStateDouble(int idx);
-
         void readEEPROM();
         void writeEEPROM();
+
+        bool getSwitchState(uint32_t id);
+        String getSwitchDesc(uint32_t id);
+        String getSwitchName(uint32_t id);
+        double getSwitchValue(uint32_t id);
+        double getSwitchMin(uint32_t id);
+        double getSwitchMax(uint32_t id);
+        void setSwitchState(uint32_t id, bool state);
+        void setSwitchName(uint32_t id, String name);
+        void setSwitchValue(uint32_t id, double value);
+        double getSwitchStep(uint32_t id);
 
         // MQTT
         String getSwitchState();
 
     private:
-      #if BOARD == BOARD_OPENASTROPOWERHUB
+        struct channel channels[NR_OF_CHANNELS];
+#if BOARD == BOARD_OPENASTROPOWERHUB
         OpenAstroPowerHub *_device;
-      #elif BOARD == BOARD_ESP8266_RELAY_MODULE
+#elif BOARD == BOARD_ESP8266_RELAY_MODULE
         ESP8266_Relay_Module *_device;
-      #endif
-        void writeChannelData(int relay, int channelValue, double doubleValue);
-        //uint16_t channelData = 0b0000000000000000;
-        //byte channelData = B00000000;
-        int registers[NR_OF_CHANNELS];
-        double registersDouble[NR_OF_CHANNELS];
+#endif
 };

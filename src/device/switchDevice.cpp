@@ -12,12 +12,13 @@ SwitchDevice::SwitchDevice() {
 
   for (int channel = NR_OF_CHANNELS - 1; channel >= 0; channel--) {
     registers[channel] = 0;
-    channelNames[channel] = "";
-    channelDesc[channel] = "";
-    channelMin[channel] = channelMinDefault[channel];
-    channelMax[channel] = channelMaxDefault[channel];
-    channelStep[channel] = channelStepDefault[channel];
-    _device->writeChannelData(0, 0, 0.0, registers, registersDouble, channelMin[channel], channelMax[channel], channelStep[channel]);
+  for (int id = NR_OF_CHANNELS - 1; id >= 0; id--) {
+    channels[id].value = 0;
+    channels[id].name = "";
+    channels[id].desc = "";
+    channels[id].min = channelMinDefault[id];
+    channels[id].max = channelMaxDefault[id];
+    channels[id].step = channelStepDefault[id];
   }
 }
 
@@ -31,7 +32,7 @@ void SwitchDevice::readEEPROM()
         String channelName;
         EEPROM.get(address, channelName);
         Serial.println(channelName);
-        channelNames[i] = channelName;
+        channels[i].name = channelName;
         address += sizeof(channelName); //update address value
     }
     EEPROM.end();
@@ -43,56 +44,74 @@ void SwitchDevice::writeEEPROM()
     int address = 0;
     for(int i = 0; i < NR_OF_CHANNELS; i++)
     {
-        EEPROM.put(address, channelNames[i]);
-        address += sizeof(channelNames[i]); //update address value
+        EEPROM.put(address, channels[i].name);
+        address += sizeof(channels[i].name); //update address value
     }
     EEPROM.commit();
 }
 
-void SwitchDevice::writeChannelData(int channel, int channelValue, double doubleValue) {
-  _device->writeChannelData(channel, channelValue, doubleValue, registers, registersDouble, channelMin[channel], channelMax[channel], channelStep[channel]);
+bool SwitchDevice::getSwitchState(uint32_t id)
+{
+    return channels[id].state;
 }
 
-
-void SwitchDevice::setChannelState(int idx, bool state)
+String SwitchDevice::getSwitchDesc(uint32_t id)
 {
-    Log.traceln(F("Channel nr: %d %T" CR), idx, state);
+    return channels[id].desc;
+}
+
+String SwitchDevice::getSwitchName(uint32_t id)
+{
+    return channels[id].name;
+}
+
+double SwitchDevice::getSwitchValue(uint32_t id)
+{
+    return channels[id].value;
+}
+
+double SwitchDevice::getSwitchMin(uint32_t id)
+{
+    return channels[id].min;
+}
+
+double SwitchDevice::getSwitchMax(uint32_t id)
+{
+    return channels[id].max;
+}
+
+void SwitchDevice::setSwitchState(uint32_t id, bool state)
+{
+    Log.traceln(F("Channel nr: %d %T" CR), id, state);
     
-    if(state == 1)
+    if(state == true)
     {
-        writeChannelData(idx, true, 1.0);
+        _device->writeChannelData(id, channels[id].max, channels);
     }
     else {
-        writeChannelData(idx, false, 0.0);
+        _device->writeChannelData(id, 0, channels);
     }
-    
 }
 
-void SwitchDevice::setChannelValue(int idx, double value)
+void SwitchDevice::setSwitchName(uint32_t id, String name)
 {
-    Log.traceln(F("Channel nr: %d %D" CR), idx, value);
-    
-    if(value > 0.0)
-    {
-        writeChannelData(idx, true, 1.0);
-        
-    }
-    else {
-        writeChannelData(idx, false, 0.0);
-    }
-    
+      channels[id].name = name;
 }
 
-bool SwitchDevice::getChannelState(int idx)
+void SwitchDevice::setSwitchValue(uint32_t id, double value)
 {
-    return registers[idx];
+    Log.traceln(F("Channel nr: %d %D" CR), id, value);
+    _device->writeChannelData(id, value, channels);  
 }
 
-double SwitchDevice::getChannelStateDouble(int idx)
+double SwitchDevice::getSwitchStep(uint32_t id)
 {
-    return registersDouble[idx];
+    return channels[id].step;
 }
 
+////////////////////////////////
+// Custom handlers for webpage//
+////////////////////////////////
 String SwitchDevice::getSwitchState()
 {
     
@@ -101,10 +120,10 @@ String SwitchDevice::getSwitchState()
 
     JsonArray array = doc.createNestedArray("switches");
 
-    for(int i = 0; i < NR_OF_CHANNELS; i++)
+    for(int id = 0; id < NR_OF_CHANNELS; id++)
     {
-        doc2["name"] = channelNames[i];
-        doc2["value"] = String(registers[i]);
+        doc2["name"] = channels[id].name;
+        doc2["value"] = String(channels[id].value);
         array.add(doc2);
     }
 
