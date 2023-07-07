@@ -1,7 +1,7 @@
-#include "device\switchHandler.h"
+#include "device\alpacaHandler.h"
 #include "device\struct.h"
 
-SwitchHandler::SwitchHandler(ESP8266WebServer *server)
+AlpacaHandler::AlpacaHandler(ESP8266WebServer *server)
 {
     _server = server;
     switchDevice = new SwitchDevice();
@@ -11,7 +11,7 @@ SwitchHandler::SwitchHandler(ESP8266WebServer *server)
     serverTransactionID = 0;
 }
 
-void SwitchHandler::debugServerQuery()
+void AlpacaHandler::debugServerQuery()
 {
     for (int i = 0; i < _server->args(); i++) {
         Log.traceln("%d" CR, i);
@@ -21,7 +21,7 @@ void SwitchHandler::debugServerQuery()
     }
 }
 
-void SwitchHandler::incrementServerTransID()
+void AlpacaHandler::incrementServerTransID()
 {
     serverTransactionID++;
 }
@@ -29,7 +29,7 @@ void SwitchHandler::incrementServerTransID()
 /**************************************************************
  * ASCOM Alpaca Management API - Management Interface Methods *
  **************************************************************/
-void SwitchHandler::handlerMgmtVersions()
+void AlpacaHandler::handlerMgmtVersions()
 {
     Log.traceln("handlerMgmtVersions called...");
     incrementServerTransID();
@@ -63,7 +63,7 @@ void SwitchHandler::handlerMgmtVersions()
     }
 }
 
-void SwitchHandler::handlerMgmtDescription()
+void AlpacaHandler::handlerMgmtDescription()
 {
     Log.traceln("handlerMgmtDescription called");
 
@@ -102,7 +102,7 @@ void SwitchHandler::handlerMgmtDescription()
     }
 }
 
-void SwitchHandler::handlerMgmtConfiguredDevices()
+void AlpacaHandler::handlerMgmtConfiguredDevices()
 {
     Log.traceln("handlerMgmtConfiguredDevices called");
 
@@ -145,7 +145,7 @@ void SwitchHandler::handlerMgmtConfiguredDevices()
 /*****************************************************************
  * ASCOM Alpaca Device API - ASCOM Methods Common To All Devices *
  *****************************************************************/
-void SwitchHandler::handleAction()
+void AlpacaHandler::handleAction()
 {
     Log.traceln("handleAction called");
 
@@ -161,7 +161,7 @@ void SwitchHandler::handleAction()
     returnStringValue("ok", "", 0);
 }
 
-void SwitchHandler::handleCommandBlind()
+void AlpacaHandler::handleCommandBlind()
 {
     Log.traceln("handleCommandBlind called");
 
@@ -180,7 +180,7 @@ void SwitchHandler::handleCommandBlind()
     returnEmpty("", 0);
 }
 
-void SwitchHandler::handleCommandBool()
+void AlpacaHandler::handleCommandBool()
 {
     Log.traceln("handleCommandBool called");
 
@@ -199,7 +199,7 @@ void SwitchHandler::handleCommandBool()
     returnBoolValue(true, "", 0);
 }
 
-void SwitchHandler::handleCommandString()
+void AlpacaHandler::handleCommandString()
 {
     Log.traceln("handleCommandBool called");
 
@@ -218,7 +218,7 @@ void SwitchHandler::handleCommandString()
     returnStringValue("ok", "", 0);
 }
 
-void SwitchHandler::handlerConnected()
+void AlpacaHandler::handlerConnected()
 {
     Log.traceln("handlerConnected called");
 
@@ -247,37 +247,37 @@ void SwitchHandler::handlerConnected()
     }
 }
 
-void SwitchHandler::handlerDescriptionGet()
+void AlpacaHandler::handlerDescriptionGet()
 {
     Log.traceln("handlerDescriptionGet called");
     returnStringValue(DESCRIPTION, "", 0);
 }
 
-void SwitchHandler::handlerDriverInfoGet()
+void AlpacaHandler::handlerDriverInfoGet()
 {
     Log.traceln("handlerDriverInfoGet called");
     returnStringValue(DRIVER_INFO, "", 0);
 }
 
-void SwitchHandler::handlerDriverVersionGet()
+void AlpacaHandler::handlerDriverVersionGet()
 {
     Log.traceln("handlerDriverVersionGet called");
     returnStringValue(DRIVER_VERSION, "", 0);
 }
 
-void SwitchHandler::handlerInterfaceVersionGet()
+void AlpacaHandler::handlerInterfaceVersionGet()
 {
     Log.traceln("handlerInterfaceVersionGet called");
     returnIntValue(1, "", 0);
 }
 
-void SwitchHandler::handlerNameGet()
+void AlpacaHandler::handlerNameGet()
 {
     Log.traceln("handlerNameGet called");
     returnStringValue(DEVICE_NAME, "", 0);
 }
 
-void SwitchHandler::handlerSupportedActionsGet()
+void AlpacaHandler::handlerSupportedActionsGet()
 {
     Log.traceln("handlerSupportedActionsGet called");
 
@@ -307,7 +307,7 @@ void SwitchHandler::handlerSupportedActionsGet()
 /*****************************************************
  * ASCOM Alpaca Device API - Switch Specific Methods *
  *****************************************************/
-void SwitchHandler::handlerDriver0Maxswitch()
+void AlpacaHandler::handlerDriver0Maxswitch()
 {
     Log.traceln("handlerDriver0Maxswitch called");
     
@@ -317,7 +317,7 @@ void SwitchHandler::handlerDriver0Maxswitch()
     returnIntValue(NR_OF_CHANNELS, "", 0);
 }
 
-void SwitchHandler::handlerDriver0CanWrite()
+void AlpacaHandler::handlerDriver0CanWrite()
 {
     Log.traceln("handlerDriver0CanWrite called");
 
@@ -329,7 +329,7 @@ void SwitchHandler::handlerDriver0CanWrite()
     returnBoolValue(true, "", 0);
 }
 
-void SwitchHandler::handlerDriver0SwitchState()
+void AlpacaHandler::handlerDriver0SwitchState()
 {
     Log.traceln("handlerDriver0SwitchState called");
 
@@ -354,7 +354,7 @@ void SwitchHandler::handlerDriver0SwitchState()
     }
 }
 
-void SwitchHandler::handlerDriver0SwitchDescription()
+void AlpacaHandler::handlerDriver0SwitchDescription()
 {
     Log.traceln("handlerDriver0SwitchDescription called");
 
@@ -366,7 +366,7 @@ void SwitchHandler::handlerDriver0SwitchDescription()
     returnStringValue(switchDevice->getSwitchDesc(id), "", 0);
 }
 
-void SwitchHandler::handlerDriver0SwitchName()
+void AlpacaHandler::handlerDriver0SwitchName()
 {
     Log.traceln("handlerDriver0SwitchName called");
 
@@ -377,7 +377,7 @@ void SwitchHandler::handlerDriver0SwitchName()
     returnStringValue(switchDevice->getSwitchName(id), "", 0);
 }
 
-void SwitchHandler::handlerDriver0SwitchValue()
+void AlpacaHandler::handlerDriver0SwitchValue()
 {
     Log.traceln("handlerDriver0SwitchValue called");
     //debugServerQuery();
@@ -405,7 +405,7 @@ void SwitchHandler::handlerDriver0SwitchValue()
 
 }
 
-void SwitchHandler::handlerDriver0MinSwitchValue()
+void AlpacaHandler::handlerDriver0MinSwitchValue()
 {
     Log.traceln("handlerDriver0MinSwitchValue called");
 
@@ -417,7 +417,7 @@ void SwitchHandler::handlerDriver0MinSwitchValue()
     returnDoubleValue(switchDevice->getSwitchMin(id), "", 0);
 }
 
-void SwitchHandler::handlerDriver0MaxSwitchValue()
+void AlpacaHandler::handlerDriver0MaxSwitchValue()
 {
     Log.traceln("handlerDriver0MaxSwitchValue called");
 
@@ -429,7 +429,7 @@ void SwitchHandler::handlerDriver0MaxSwitchValue()
     returnDoubleValue(switchDevice->getSwitchMax(id), "", 0);
 }
 
-void SwitchHandler::handlerDriver0SwitchStep()
+void AlpacaHandler::handlerDriver0SwitchStep()
 {
     Log.traceln("handlerDriver0SwitchStep called");
 
@@ -444,32 +444,32 @@ void SwitchHandler::handlerDriver0SwitchStep()
 /***********************************************
           Custom handlers for webpage
 ***********************************************/
-bool SwitchHandler::getSwitchState(uint32_t id)
+bool AlpacaHandler::getSwitchState(uint32_t id)
 {
     return switchDevice->getSwitchState(id);
 }
 
-void SwitchHandler::setSwitchState(uint32_t id, bool state)
+void AlpacaHandler::setSwitchState(uint32_t id, bool state)
 {
     switchDevice->setSwitchState(id, state);
 }
 
-String SwitchHandler::getSwitchName(uint32_t id)
+String AlpacaHandler::getSwitchName(uint32_t id)
 {
     return switchDevice->getSwitchName(id);
 }
 
-void SwitchHandler::setSwitchName(uint32_t id, String name)
+void AlpacaHandler::setSwitchName(uint32_t id, String name)
 {
     switchDevice->setSwitchName(id, name);
 }
 
-void SwitchHandler::storeEEPROM()
+void AlpacaHandler::storeEEPROM()
 {
     switchDevice->writeEEPROM();
 }
 
-String SwitchHandler::getSwitchState()
+String AlpacaHandler::getSwitchState()
 {
     return switchDevice->getSwitchState();
 }
@@ -477,7 +477,7 @@ String SwitchHandler::getSwitchState()
 /*********************************************
           Handler Return Methods
 *********************************************/
-void SwitchHandler::returnEmpty(String errMsg, int errNr)
+void AlpacaHandler::returnEmpty(String errMsg, int errNr)
 {
     incrementServerTransID();
     DynamicJsonDocument doc(1024);
@@ -494,25 +494,7 @@ void SwitchHandler::returnEmpty(String errMsg, int errNr)
     _server->send(200, "text/json", output);
 }
 
-void SwitchHandler::returnStringValue(String val, String errMsg, int errNr)
-{
-    incrementServerTransID();
-    DynamicJsonDocument doc(1024);
-
-    doc["Value"] = val;
-    doc["ErrorMessage"] = errMsg;
-    doc["ErrorNumber"] = errNr;
-    doc["ClientTransactionID"] = transID;
-    doc["ServerTransactionID"] = serverTransactionID;
-
-    String output;
-    serializeJson(doc, output);
-    Log.traceln(F("Returning: %s" CR), output.c_str());
-
-    _server->send(200, "text/json", output);
-}
-
-void SwitchHandler::returnBoolValue(bool val, String errMsg, int errNr)
+void AlpacaHandler::returnStringValue(String val, String errMsg, int errNr)
 {
     incrementServerTransID();
     DynamicJsonDocument doc(1024);
@@ -530,7 +512,7 @@ void SwitchHandler::returnBoolValue(bool val, String errMsg, int errNr)
     _server->send(200, "text/json", output);
 }
 
-void SwitchHandler::returnIntValue(uint32_t val, String errMsg, int errNr)
+void AlpacaHandler::returnBoolValue(bool val, String errMsg, int errNr)
 {
     incrementServerTransID();
     DynamicJsonDocument doc(1024);
@@ -548,7 +530,7 @@ void SwitchHandler::returnIntValue(uint32_t val, String errMsg, int errNr)
     _server->send(200, "text/json", output);
 }
 
-void SwitchHandler::returnFloatValue(float val, String errMsg, int errNr)
+void AlpacaHandler::returnIntValue(uint32_t val, String errMsg, int errNr)
 {
     incrementServerTransID();
     DynamicJsonDocument doc(1024);
@@ -566,7 +548,7 @@ void SwitchHandler::returnFloatValue(float val, String errMsg, int errNr)
     _server->send(200, "text/json", output);
 }
 
-void SwitchHandler::returnJsonArrayValue(JsonArray val, String errMsg, int errNr)
+void AlpacaHandler::returnFloatValue(float val, String errMsg, int errNr)
 {
     incrementServerTransID();
     DynamicJsonDocument doc(1024);
@@ -584,7 +566,25 @@ void SwitchHandler::returnJsonArrayValue(JsonArray val, String errMsg, int errNr
     _server->send(200, "text/json", output);
 }
 
-void SwitchHandler::returnDoubleValue(double val, String errMsg, int errNr)
+void AlpacaHandler::returnJsonArrayValue(JsonArray val, String errMsg, int errNr)
+{
+    incrementServerTransID();
+    DynamicJsonDocument doc(1024);
+
+    doc["Value"] = val;
+    doc["ErrorMessage"] = errMsg;
+    doc["ErrorNumber"] = errNr;
+    doc["ClientTransactionID"] = transID;
+    doc["ServerTransactionID"] = serverTransactionID;
+
+    String output;
+    serializeJson(doc, output);
+    Log.traceln(F("Returning: %s" CR), output.c_str());
+
+    _server->send(200, "text/json", output);
+}
+
+void AlpacaHandler::returnDoubleValue(double val, String errMsg, int errNr)
 {
     incrementServerTransID();
     DynamicJsonDocument doc(1024);

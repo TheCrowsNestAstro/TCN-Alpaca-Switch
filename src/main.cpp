@@ -9,7 +9,7 @@
 
 #include "arduino_secrets.h"
 #include "configuration.hpp"
-#include "device\switchHandler.h"
+#include "device\alpacaHandler.h"
 
 #include "html.h"
 
@@ -46,7 +46,7 @@ unsigned long lastMsg = 0;
 char msg[MSG_BUFFER_SIZE];
 int value = 0;
 
-SwitchHandler *device = new SwitchHandler(server);
+AlpacaHandler *device = new AlpacaHandler(server);
 
 auto timer = timer_create_default();
 

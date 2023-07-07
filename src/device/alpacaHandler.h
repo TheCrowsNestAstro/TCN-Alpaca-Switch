@@ -8,12 +8,12 @@
 #include "configuration.hpp"
 #include "switchDevice.h"
 
-class SwitchHandler
+class AlpacaHandler
 {
     ESP8266WebServer* _server;
 
     public:
-        SwitchHandler(ESP8266WebServer* server);
+        AlpacaHandler(ESP8266WebServer* server);
         
         // ASCOM Alpaca Management API - Management Interface Methods
         void handlerMgmtVersions();
