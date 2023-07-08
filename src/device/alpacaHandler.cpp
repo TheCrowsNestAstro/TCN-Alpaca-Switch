@@ -32,6 +32,8 @@ void AlpacaHandler::incrementServerTransID()
 void AlpacaHandler::handlerMgmtVersions()
 {
     Log.traceln("handlerMgmtVersions called...");
+    if (conformanceCheck() == false){
+        return;
     }
     incrementServerTransID();
 
