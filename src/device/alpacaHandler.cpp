@@ -32,10 +32,8 @@ void AlpacaHandler::incrementServerTransID()
 void AlpacaHandler::handlerMgmtVersions()
 {
     Log.traceln("handlerMgmtVersions called...");
+    }
     incrementServerTransID();
-
-    clientID = (uint32_t)_server->arg("ClientID").toInt();
-    transID = (uint32_t)_server->arg("ClientTransactionID").toInt();
 
     if (_server->method() == HTTP_GET)
     {
@@ -66,9 +64,9 @@ void AlpacaHandler::handlerMgmtVersions()
 void AlpacaHandler::handlerMgmtDescription()
 {
     Log.traceln("handlerMgmtDescription called");
-
-    clientID = (uint32_t)_server->arg("ClientID").toInt();
-    transID = (uint32_t)_server->arg("ClientTransactionID").toInt();
+    if (conformanceCheck() == false){
+        return;
+    }
 
     if (_server->method() == HTTP_GET)
     {
@@ -105,10 +103,10 @@ void AlpacaHandler::handlerMgmtDescription()
 void AlpacaHandler::handlerMgmtConfiguredDevices()
 {
     Log.traceln("handlerMgmtConfiguredDevices called");
-
-    clientID = (uint32_t)_server->arg("ClientID").toInt();
-    transID = (uint32_t)_server->arg("ClientTransactionID").toInt();
-
+    if (conformanceCheck() == false){
+        return;
+    }
+    
     if (_server->method() == HTTP_GET)
     {
         incrementServerTransID();
@@ -148,10 +146,10 @@ void AlpacaHandler::handlerMgmtConfiguredDevices()
 void AlpacaHandler::handleAction()
 {
     Log.traceln("handleAction called");
-
-    clientID = (uint32_t)_server->arg("ClientID").toInt();
-    transID = (uint32_t)_server->arg("ClientTransactionID").toInt();
-
+    if (conformanceCheck() == false){
+        return;
+    }
+    
     String deviceType = _server->arg("device_type");
     //u_int32_t deviceNumber = (uint32_t)_server->arg("device_number").toInt();
 
@@ -164,10 +162,10 @@ void AlpacaHandler::handleAction()
 void AlpacaHandler::handleCommandBlind()
 {
     Log.traceln("handleCommandBlind called");
-
-    clientID = (uint32_t)_server->arg("ClientID").toInt();
-    transID = (uint32_t)_server->arg("ClientTransactionID").toInt();
-
+    if (conformanceCheck() == false){
+        return;
+    }
+    
     String deviceType = _server->arg("device_type");
     u_int32_t deviceNumber = (uint32_t)_server->arg("device_number").toInt();
 
@@ -183,10 +181,10 @@ void AlpacaHandler::handleCommandBlind()
 void AlpacaHandler::handleCommandBool()
 {
     Log.traceln("handleCommandBool called");
-
-    clientID = (uint32_t)_server->arg("ClientID").toInt();
-    transID = (uint32_t)_server->arg("ClientTransactionID").toInt();
-
+    if (conformanceCheck() == false){
+        return;
+    }
+    
     String deviceType = _server->arg("device_type");
     u_int32_t deviceNumber = (uint32_t)_server->arg("device_number").toInt();
 
@@ -202,9 +200,9 @@ void AlpacaHandler::handleCommandBool()
 void AlpacaHandler::handleCommandString()
 {
     Log.traceln("handleCommandBool called");
-
-    clientID = (uint32_t)_server->arg("ClientID").toInt();
-    transID = (uint32_t)_server->arg("ClientTransactionID").toInt();
+    if (conformanceCheck() == false){
+        return;
+    }
 
     String deviceType = _server->arg("device_type");
     u_int32_t deviceNumber = (uint32_t)_server->arg("device_number").toInt();
@@ -221,9 +219,9 @@ void AlpacaHandler::handleCommandString()
 void AlpacaHandler::handlerConnected()
 {
     Log.traceln("handlerConnected called");
-
-    clientID = (uint32_t)_server->arg("ClientID").toInt();
-    transID = (uint32_t)_server->arg("ClientTransactionID").toInt();
+    if (conformanceCheck() == false){
+        return;
+    }
 
     if (_server->method() == HTTP_GET)
     {
@@ -250,36 +248,54 @@ void AlpacaHandler::handlerConnected()
 void AlpacaHandler::handlerDescriptionGet()
 {
     Log.traceln("handlerDescriptionGet called");
+    if (conformanceCheck() == false){
+        return;
+    }
     returnStringValue(DESCRIPTION, "", 0);
 }
 
 void AlpacaHandler::handlerDriverInfoGet()
 {
     Log.traceln("handlerDriverInfoGet called");
+    if (conformanceCheck() == false){
+        return;
+    }
     returnStringValue(DRIVER_INFO, "", 0);
 }
 
 void AlpacaHandler::handlerDriverVersionGet()
 {
     Log.traceln("handlerDriverVersionGet called");
+    if (conformanceCheck() == false){
+        return;
+    }
     returnStringValue(DRIVER_VERSION, "", 0);
 }
 
 void AlpacaHandler::handlerInterfaceVersionGet()
 {
     Log.traceln("handlerInterfaceVersionGet called");
+    if (conformanceCheck() == false){
+        return;
+    }
     returnIntValue(1, "", 0);
 }
 
 void AlpacaHandler::handlerNameGet()
 {
     Log.traceln("handlerNameGet called");
+    if (conformanceCheck() == false){
+        return;
+    }
     returnStringValue(DEVICE_NAME, "", 0);
 }
 
 void AlpacaHandler::handlerSupportedActionsGet()
 {
     Log.traceln("handlerSupportedActionsGet called");
+    if (conformanceCheck() == false){
+        return;
+    }
 
     DynamicJsonDocument val(1024);
     const size_t CAPACITY = JSON_ARRAY_SIZE(13);
@@ -310,20 +326,20 @@ void AlpacaHandler::handlerSupportedActionsGet()
 void AlpacaHandler::handlerDriver0Maxswitch()
 {
     Log.traceln("handlerDriver0Maxswitch called");
+    if (conformanceCheck() == false){
+        return;
+    }
     
-    clientID = (uint32_t)_server->arg("ClientID").toInt();
-    transID = (uint32_t)_server->arg("ClientTransactionID").toInt();
-    u_int32_t deviceNumber = (uint32_t)_server->arg("device_number").toInt();
     returnIntValue(NR_OF_CHANNELS, "", 0);
 }
 
 void AlpacaHandler::handlerDriver0CanWrite()
 {
     Log.traceln("handlerDriver0CanWrite called");
-
-    clientID = (uint32_t)_server->arg("ClientID").toInt();
-    transID = (uint32_t)_server->arg("ClientTransactionID").toInt();
-    u_int32_t deviceNumber = (uint32_t)_server->arg("device_number").toInt();
+    if (conformanceCheck() == false){
+        return;
+    }
+    
     u_int32_t id = (uint32_t)_server->arg("ID").toInt();
     
     returnBoolValue(true, "", 0);
@@ -332,10 +348,10 @@ void AlpacaHandler::handlerDriver0CanWrite()
 void AlpacaHandler::handlerDriver0SwitchState()
 {
     Log.traceln("handlerDriver0SwitchState called");
-
-    clientID = (uint32_t)_server->arg("ClientID").toInt();
-    transID = (uint32_t)_server->arg("ClientTransactionID").toInt();
-    u_int32_t deviceNumber = (uint32_t)_server->arg("device_number").toInt();
+    if (conformanceCheck() == false){
+        return;
+    }
+    
     u_int32_t id = (uint32_t)_server->arg("ID").toInt();
 
     if (_server->method() == HTTP_GET)
@@ -357,10 +373,10 @@ void AlpacaHandler::handlerDriver0SwitchState()
 void AlpacaHandler::handlerDriver0SwitchDescription()
 {
     Log.traceln("handlerDriver0SwitchDescription called");
-
-    clientID = (uint32_t)_server->arg("ClientID").toInt();
-    transID = (uint32_t)_server->arg("ClientTransactionID").toInt();
-    u_int32_t deviceNumber = (uint32_t)_server->arg("device_number").toInt();
+    if (conformanceCheck() == false){
+        return;
+    }
+    
     u_int32_t id = (uint32_t)_server->arg("ID").toInt();
     
     returnStringValue(switchDevice->getSwitchDesc(id), "", 0);
@@ -369,9 +385,10 @@ void AlpacaHandler::handlerDriver0SwitchDescription()
 void AlpacaHandler::handlerDriver0SwitchName()
 {
     Log.traceln("handlerDriver0SwitchName called");
+    if (conformanceCheck() == false){
+        return;
+    }
 
-    clientID = (uint32_t)_server->arg("ClientID").toInt();
-    transID = (uint32_t)_server->arg("ClientTransactionID").toInt();
     u_int32_t id = (uint32_t)_server->arg("ID").toInt();
 
     returnStringValue(switchDevice->getSwitchName(id), "", 0);
@@ -380,11 +397,10 @@ void AlpacaHandler::handlerDriver0SwitchName()
 void AlpacaHandler::handlerDriver0SwitchValue()
 {
     Log.traceln("handlerDriver0SwitchValue called");
-    //debugServerQuery();
+    if (conformanceCheck() == false){
+        return;
+    }
 
-    clientID = (uint32_t)_server->arg("ClientID").toInt();
-    transID = (uint32_t)_server->arg("ClientTransactionID").toInt();
-    // u_int32_t deviceNumber = (uint32_t)_server->arg("device_number").toInt();
     u_int32_t id = (uint32_t)_server->arg("ID").toInt();
 
     if (_server->method() == HTTP_GET)
@@ -408,10 +424,10 @@ void AlpacaHandler::handlerDriver0SwitchValue()
 void AlpacaHandler::handlerDriver0MinSwitchValue()
 {
     Log.traceln("handlerDriver0MinSwitchValue called");
+    if (conformanceCheck() == false){
+        return;
+    }
 
-    clientID = (uint32_t)_server->arg("ClientID").toInt();
-    transID = (uint32_t)_server->arg("ClientTransactionID").toInt();
-    // u_int32_t deviceNumber = (uint32_t)_server->arg("device_number").toInt();
     u_int32_t id = (uint32_t)_server->arg("ID").toInt();
     
     returnDoubleValue(switchDevice->getSwitchMin(id), "", 0);
@@ -420,10 +436,10 @@ void AlpacaHandler::handlerDriver0MinSwitchValue()
 void AlpacaHandler::handlerDriver0MaxSwitchValue()
 {
     Log.traceln("handlerDriver0MaxSwitchValue called");
+    if (conformanceCheck() == false){
+        return;
+    }
 
-    clientID = (uint32_t)_server->arg("ClientID").toInt();
-    transID = (uint32_t)_server->arg("ClientTransactionID").toInt();
-    // u_int32_t deviceNumber = (uint32_t)_server->arg("device_number").toInt();
     u_int32_t id = (uint32_t)_server->arg("ID").toInt();
     
     returnDoubleValue(switchDevice->getSwitchMax(id), "", 0);
@@ -432,10 +448,10 @@ void AlpacaHandler::handlerDriver0MaxSwitchValue()
 void AlpacaHandler::handlerDriver0SwitchStep()
 {
     Log.traceln("handlerDriver0SwitchStep called");
+    if (conformanceCheck() == false){
+        return;
+    }
 
-    clientID = (uint32_t)_server->arg("ClientID").toInt();
-    transID = (uint32_t)_server->arg("ClientTransactionID").toInt();
-    // u_int32_t deviceNumber = (uint32_t)_server->arg("device_number").toInt();
     u_int32_t id = (uint32_t)_server->arg("ID").toInt();
     
     returnDoubleValue(switchDevice->getSwitchStep(id), "", 0);
@@ -475,6 +491,24 @@ String AlpacaHandler::getSwitchState()
 }
 
 /*********************************************
+          Alpaca Conformance Methods
+*********************************************/
+bool AlpacaHandler::conformanceCheck(){
+    clientID = (uint32_t)_server->arg("ClientID").toInt();
+    transID = (uint32_t)_server->arg("ClientTransactionID").toInt();
+    deviceNumber = (uint32_t)_server->arg("device_number").toInt();
+    if (_server->arg("ClientID").indexOf("-") >= 0 || clientID == 0){
+        returnError400("ClientID invalid");
+        return false;
+    }
+    if (_server->arg("ClientTransactionID").indexOf("-") >= 0 || transID == 0){
+        returnError400("ClientTransactionID invalid");
+        return false;
+    }
+    return true;
+}
+
+/*********************************************
           Handler Return Methods
 *********************************************/
 void AlpacaHandler::returnEmpty(String errMsg, int errNr)
@@ -491,7 +525,23 @@ void AlpacaHandler::returnEmpty(String errMsg, int errNr)
     serializeJson(doc, output);
     Log.traceln(F("Returning: %s" CR), output.c_str());
 
-    _server->send(200, "text/json", output);
+    _server->send(200, "application/json", output);
+}
+
+void AlpacaHandler::returnError400(String errMsg)
+{
+    incrementServerTransID();
+    Log.traceln(F("Returning: Error 400 = %s" CR), errMsg.c_str());
+
+    _server->send(400, "text/plain", errMsg);
+}
+
+void AlpacaHandler::returnError500(String errMsg)
+{
+    incrementServerTransID();
+    Log.traceln(F("Returning: Error 500 = %s" CR), errMsg.c_str());
+
+    _server->send(500, "text/plain", errMsg);
 }
 
 void AlpacaHandler::returnStringValue(String val, String errMsg, int errNr)
@@ -509,7 +559,7 @@ void AlpacaHandler::returnStringValue(String val, String errMsg, int errNr)
     serializeJson(doc, output);
     Log.traceln(F("Returning: %s" CR), output.c_str());
 
-    _server->send(200, "text/json", output);
+    _server->send(200, "application/json", output);
 }
 
 void AlpacaHandler::returnBoolValue(bool val, String errMsg, int errNr)
@@ -527,7 +577,7 @@ void AlpacaHandler::returnBoolValue(bool val, String errMsg, int errNr)
     serializeJson(doc, output);
     Log.traceln(F("Returning: %s" CR), output.c_str());
 
-    _server->send(200, "text/json", output);
+    _server->send(200, "application/json", output);
 }
 
 void AlpacaHandler::returnIntValue(uint32_t val, String errMsg, int errNr)
@@ -545,7 +595,7 @@ void AlpacaHandler::returnIntValue(uint32_t val, String errMsg, int errNr)
     serializeJson(doc, output);
     Log.traceln(F("Returning: %s" CR), output.c_str());
 
-    _server->send(200, "text/json", output);
+    _server->send(200, "application/json", output);
 }
 
 void AlpacaHandler::returnFloatValue(float val, String errMsg, int errNr)
@@ -563,7 +613,7 @@ void AlpacaHandler::returnFloatValue(float val, String errMsg, int errNr)
     serializeJson(doc, output);
     Log.traceln(F("Returning: %s" CR), output.c_str());
 
-    _server->send(200, "text/json", output);
+    _server->send(200, "application/json", output);
 }
 
 void AlpacaHandler::returnJsonArrayValue(JsonArray val, String errMsg, int errNr)
@@ -581,7 +631,7 @@ void AlpacaHandler::returnJsonArrayValue(JsonArray val, String errMsg, int errNr
     serializeJson(doc, output);
     Log.traceln(F("Returning: %s" CR), output.c_str());
 
-    _server->send(200, "text/json", output);
+    _server->send(200, "application/json", output);
 }
 
 void AlpacaHandler::returnDoubleValue(double val, String errMsg, int errNr)
@@ -599,5 +649,5 @@ void AlpacaHandler::returnDoubleValue(double val, String errMsg, int errNr)
     serializeJson(doc, output);
     Log.traceln(F("Returning: %s" CR), output.c_str());
 
-    _server->send(200, "text/json", output);
+    _server->send(200, "application/json", output);
 }

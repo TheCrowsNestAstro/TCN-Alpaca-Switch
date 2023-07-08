@@ -57,6 +57,7 @@ class AlpacaHandler
     private:
         uint32_t transID;
         uint32_t clientID;
+        uint32_t deviceNumber;
         uint32_t serverTransactionID = 0;
         String uniqueID = "4431281c-8560-4ad7-982f-5a6e507dda19";
 
@@ -64,8 +65,13 @@ class AlpacaHandler
 
         void incrementServerTransID();
 
+        //Alpaca Conformance Methods
+        bool conformanceCheck();
+
         // Handler Return Methods
         void returnEmpty(String errMsg, int errNr);
+        void returnError400(String errMsg);
+        void returnError500(String errMsg);
         void returnStringValue(String val, String errMsg, int errNr);
         void returnBoolValue(bool val, String errMsg, int errNr);
         void returnIntValue(uint32_t val, String errMsg, int errNr);
