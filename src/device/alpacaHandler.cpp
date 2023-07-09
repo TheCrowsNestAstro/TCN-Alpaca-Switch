@@ -342,7 +342,7 @@ void AlpacaHandler::handlerDriver0CanWrite()
         return;
     }
     
-    u_int32_t id = getAlpacaID("Id");
+    getAlpacaID("Id");
     if (_validAPIRequest){
         returnBoolValue(true, "", 0);
     } else {
