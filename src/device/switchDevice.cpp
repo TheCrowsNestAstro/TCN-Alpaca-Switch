@@ -17,7 +17,7 @@ SwitchDevice::SwitchDevice() {
     channels[id].min = channelMinDefault[id];
     channels[id].max = channelMaxDefault[id];
     channels[id].step = channelStepDefault[id];
-    _device->writeChannelData(0, 0.0, channels);
+    _device->writeSwitchData(0, 0.0, channels);
   }
 }
 
@@ -30,7 +30,6 @@ void SwitchDevice::readEEPROM()
     {
         String channelName;
         EEPROM.get(address, channelName);
-        Serial.println(channelName);
         channels[i].name = channelName;
         address += sizeof(channelName); //update address value
     }
@@ -81,14 +80,14 @@ double SwitchDevice::getSwitchMax(uint32_t id)
 
 void SwitchDevice::setSwitchState(uint32_t id, bool state)
 {
-    Log.traceln(F("Channel nr: %d %T" CR), id, state);
+    Log.traceln(F("Switch ID: %d State: %s" CR), id, state ? "True" : "False");
     
     if(state == true)
     {
-        _device->writeChannelData(id, channels[id].max, channels);
+        _device->writeSwitchData(id, channels[id].max, channels);
     }
     else {
-        _device->writeChannelData(id, 0, channels);
+        _device->writeSwitchData(id, 0, channels);
     }
 }
 
@@ -100,7 +99,7 @@ void SwitchDevice::setSwitchName(uint32_t id, String name)
 void SwitchDevice::setSwitchValue(uint32_t id, double value)
 {
     Log.traceln(F("Channel nr: %d %D" CR), id, value);
-    _device->writeChannelData(id, value, channels);  
+    _device->writeSwitchData(id, value, channels);  
 }
 
 double SwitchDevice::getSwitchStep(uint32_t id)

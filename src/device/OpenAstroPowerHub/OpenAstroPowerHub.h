@@ -7,5 +7,5 @@
 class OpenAstroPowerHub {
 public:
   OpenAstroPowerHub();
-  void writeChannelData(int id, double value, struct channel (&channels)[NR_OF_CHANNELS]);
+  void writeSwitchData(int id, double value, struct channel (&channels)[NR_OF_CHANNELS]);
 };

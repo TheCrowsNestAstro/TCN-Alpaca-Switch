@@ -8,8 +8,8 @@ OpenAstroPowerHub::OpenAstroPowerHub() {
   
 }
 
-void OpenAstroPowerHub::writeChannelData(int id, double value, struct channel (&channels)[NR_OF_CHANNELS]) {
-  Log.traceln(F("writeChannelData nr: %d %T" CR), id, value);
+void OpenAstroPowerHub::writeSwitchData(int id, double value, struct channel (&channels)[NR_OF_CHANNELS]) {
+  Log.traceln(F("writeSwitchData ID: %d Value: %d" CR), id, value);
   channels[id].value = value;
   channels[id].state = (value != 0) ? 1 : 0;
 

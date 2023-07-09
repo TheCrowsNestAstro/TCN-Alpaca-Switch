@@ -8,8 +8,8 @@ ESP8266_Relay_Module::ESP8266_Relay_Module() {
   pinMode(RELAY_OE_PIN, OUTPUT);
 }
 
-void ESP8266_Relay_Module::writeChannelData(int id, double value, struct channel (&channels)[NR_OF_CHANNELS]) {
-  Log.traceln(F("writeChannelData nr: %d %T" CR), id, value);
+void ESP8266_Relay_Module::writeSwitchData(int id, double value, struct channel (&channels)[NR_OF_CHANNELS]) {
+  Log.traceln(F("writeSwitchData nr: %d Value: %d" CR), id, value);
   channels[id].value = (value == channels[id].max) ? 1 : 0;
   channels[id].state = (value != 0) ? 1 : 0;
 

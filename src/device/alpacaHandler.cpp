@@ -32,7 +32,7 @@ void AlpacaHandler::incrementServerTransID()
 void AlpacaHandler::handlerMgmtVersions()
 {
     Log.traceln("handlerMgmtVersions called...");
-    if (conformanceCheck() == false){
+    if (!conformanceCheck()){
         return;
     }
     incrementServerTransID();
@@ -66,7 +66,7 @@ void AlpacaHandler::handlerMgmtVersions()
 void AlpacaHandler::handlerMgmtDescription()
 {
     Log.traceln("handlerMgmtDescription called");
-    if (conformanceCheck() == false){
+    if (!conformanceCheck()){
         return;
     }
 
@@ -105,7 +105,7 @@ void AlpacaHandler::handlerMgmtDescription()
 void AlpacaHandler::handlerMgmtConfiguredDevices()
 {
     Log.traceln("handlerMgmtConfiguredDevices called");
-    if (conformanceCheck() == false){
+    if (!conformanceCheck()){
         return;
     }
     
@@ -148,7 +148,7 @@ void AlpacaHandler::handlerMgmtConfiguredDevices()
 void AlpacaHandler::handleAction()
 {
     Log.traceln("handleAction called");
-    if (conformanceCheck() == false){
+    if (!conformanceCheck()){
         return;
     }
     
@@ -164,12 +164,12 @@ void AlpacaHandler::handleAction()
 void AlpacaHandler::handleCommandBlind()
 {
     Log.traceln("handleCommandBlind called");
-    if (conformanceCheck() == false){
+    if (!conformanceCheck()){
         return;
     }
     
     String deviceType = _server->arg("device_type");
-    u_int32_t deviceNumber = (uint32_t)_server->arg("device_number").toInt();
+    //u_int32_t deviceNumber = (uint32_t)_server->arg("device_number").toInt();
 
     String command = _server->arg("Command");
     String raw = _server->arg("Raw");
@@ -183,12 +183,12 @@ void AlpacaHandler::handleCommandBlind()
 void AlpacaHandler::handleCommandBool()
 {
     Log.traceln("handleCommandBool called");
-    if (conformanceCheck() == false){
+    if (!conformanceCheck()){
         return;
     }
     
     String deviceType = _server->arg("device_type");
-    u_int32_t deviceNumber = (uint32_t)_server->arg("device_number").toInt();
+    //u_int32_t deviceNumber = (uint32_t)_server->arg("device_number").toInt();
 
     String command = _server->arg("Command");
     String raw = _server->arg("Raw");
@@ -202,12 +202,12 @@ void AlpacaHandler::handleCommandBool()
 void AlpacaHandler::handleCommandString()
 {
     Log.traceln("handleCommandBool called");
-    if (conformanceCheck() == false){
+    if (!conformanceCheck()){
         return;
     }
 
     String deviceType = _server->arg("device_type");
-    u_int32_t deviceNumber = (uint32_t)_server->arg("device_number").toInt();
+    //u_int32_t deviceNumber = (uint32_t)_server->arg("device_number").toInt();
 
     String command = _server->arg("Command");
     String raw = _server->arg("Raw");
@@ -221,7 +221,7 @@ void AlpacaHandler::handleCommandString()
 void AlpacaHandler::handlerConnected()
 {
     Log.traceln("handlerConnected called");
-    if (conformanceCheck() == false){
+    if (!conformanceCheck()){
         return;
     }
 
@@ -229,19 +229,19 @@ void AlpacaHandler::handlerConnected()
     {
         Log.traceln("handlerConnected GET called");
 
-        String deviceType = _server->arg("device_type");
-        //uint32_t deviceNumber = (uint32_t)_server->arg("device_number").toInt();
-
         returnBoolValue(switchDevice->connected, "", 0);
     }
 
     if (_server->method() == HTTP_PUT)
     {
         Log.traceln("handlerConnected POST called");
-
-        // String _connected = _server->arg("Connected");
-        switchDevice->connected = (bool)_server->arg("Connected");
-        // Log.traceln("%t", CR, switchDevice->connected);
+        bool state = getAlpacaBool("Connected");
+        if (_validAPIRequest){
+            switchDevice->connected = state;
+        } else {
+            returnError400("Invalid parameter value");
+            return;
+        }
 
         returnEmpty("", 0);
     }
@@ -250,7 +250,7 @@ void AlpacaHandler::handlerConnected()
 void AlpacaHandler::handlerDescriptionGet()
 {
     Log.traceln("handlerDescriptionGet called");
-    if (conformanceCheck() == false){
+    if (!conformanceCheck()){
         return;
     }
     returnStringValue(DESCRIPTION, "", 0);
@@ -259,7 +259,7 @@ void AlpacaHandler::handlerDescriptionGet()
 void AlpacaHandler::handlerDriverInfoGet()
 {
     Log.traceln("handlerDriverInfoGet called");
-    if (conformanceCheck() == false){
+    if (!conformanceCheck()){
         return;
     }
     returnStringValue(DRIVER_INFO, "", 0);
@@ -268,7 +268,7 @@ void AlpacaHandler::handlerDriverInfoGet()
 void AlpacaHandler::handlerDriverVersionGet()
 {
     Log.traceln("handlerDriverVersionGet called");
-    if (conformanceCheck() == false){
+    if (!conformanceCheck()){
         return;
     }
     returnStringValue(DRIVER_VERSION, "", 0);
@@ -277,7 +277,7 @@ void AlpacaHandler::handlerDriverVersionGet()
 void AlpacaHandler::handlerInterfaceVersionGet()
 {
     Log.traceln("handlerInterfaceVersionGet called");
-    if (conformanceCheck() == false){
+    if (!conformanceCheck()){
         return;
     }
     returnIntValue(1, "", 0);
@@ -286,7 +286,7 @@ void AlpacaHandler::handlerInterfaceVersionGet()
 void AlpacaHandler::handlerNameGet()
 {
     Log.traceln("handlerNameGet called");
-    if (conformanceCheck() == false){
+    if (!conformanceCheck()){
         return;
     }
     returnStringValue(DEVICE_NAME, "", 0);
@@ -295,7 +295,7 @@ void AlpacaHandler::handlerNameGet()
 void AlpacaHandler::handlerSupportedActionsGet()
 {
     Log.traceln("handlerSupportedActionsGet called");
-    if (conformanceCheck() == false){
+    if (!conformanceCheck()){
         return;
     }
 
@@ -328,7 +328,7 @@ void AlpacaHandler::handlerSupportedActionsGet()
 void AlpacaHandler::handlerDriver0Maxswitch()
 {
     Log.traceln("handlerDriver0Maxswitch called");
-    if (conformanceCheck() == false){
+    if (!conformanceCheck()){
         return;
     }
     
@@ -338,125 +338,150 @@ void AlpacaHandler::handlerDriver0Maxswitch()
 void AlpacaHandler::handlerDriver0CanWrite()
 {
     Log.traceln("handlerDriver0CanWrite called");
-    if (conformanceCheck() == false){
+    if (!conformanceCheck()){
         return;
     }
     
-    u_int32_t id = (uint32_t)_server->arg("ID").toInt();
-    
-    returnBoolValue(true, "", 0);
+    u_int32_t id = getAlpacaID("Id");
+    if (_validAPIRequest){
+        returnBoolValue(true, "", 0);
+    } else {
+        returnError400("Invalid parameter value");
+    }
 }
 
 void AlpacaHandler::handlerDriver0SwitchState()
 {
     Log.traceln("handlerDriver0SwitchState called");
-    if (conformanceCheck() == false){
+    if (!conformanceCheck()){
         return;
     }
-    
-    u_int32_t id = (uint32_t)_server->arg("ID").toInt();
-
-    if (_server->method() == HTTP_GET)
-    {
-        Log.traceln("GET SwitchState called");
-
-        returnBoolValue(switchDevice->getSwitchState(id), "", 0);
-    }
-    else if (_server->method() == HTTP_PUT)
-    {
-        Log.traceln("PUT SwitchState called");
-        bool val = (bool)_server->arg("State");
-
-        switchDevice->setSwitchState(id, val);
-        returnEmpty("", 0);
+    u_int32_t id = getAlpacaID("Id");
+    if (_validAPIRequest){
+        if (_server->method() == HTTP_GET){
+            Log.traceln("GET SwitchState called");
+            returnBoolValue(switchDevice->getSwitchState(id), "", 0);
+        }
+        else if (_server->method() == HTTP_PUT){
+            Log.traceln("PUT SwitchState called");
+            bool state = getAlpacaBool("State");
+            if (_validAPIRequest){
+                switchDevice->setSwitchState(id, state);
+            } else {
+                returnError400("Invalid parameter value");
+                return;
+            }
+            returnEmpty("", 0);
+        }
+    } else {
+        returnError400("Invalid parameter value");
     }
 }
 
 void AlpacaHandler::handlerDriver0SwitchDescription()
 {
     Log.traceln("handlerDriver0SwitchDescription called");
-    if (conformanceCheck() == false){
+    if (!conformanceCheck()){
         return;
     }
-    
-    u_int32_t id = (uint32_t)_server->arg("ID").toInt();
-    
-    returnStringValue(switchDevice->getSwitchDesc(id), "", 0);
+    u_int32_t id = getAlpacaID("Id");
+    if (_validAPIRequest){
+        returnStringValue(switchDevice->getSwitchDesc(id), "", 0);
+    } else {
+        returnError400("Invalid parameter value");
+    }
 }
 
 void AlpacaHandler::handlerDriver0SwitchName()
 {
     Log.traceln("handlerDriver0SwitchName called");
-    if (conformanceCheck() == false){
+    if (!conformanceCheck()){
         return;
     }
-
-    u_int32_t id = (uint32_t)_server->arg("ID").toInt();
-
-    returnStringValue(switchDevice->getSwitchName(id), "", 0);
+    u_int32_t id = getAlpacaID("Id");
+    if (_validAPIRequest){
+        returnStringValue(switchDevice->getSwitchName(id), "", 0);
+    } else {
+        returnError400("Invalid parameter value");
+    }
 }
 
 void AlpacaHandler::handlerDriver0SwitchValue()
 {
     Log.traceln("handlerDriver0SwitchValue called");
-    if (conformanceCheck() == false){
+    if (!conformanceCheck()){
         return;
     }
-
-    u_int32_t id = (uint32_t)_server->arg("ID").toInt();
-
-    if (_server->method() == HTTP_GET)
-    {
-        Log.traceln("GET SwitchValue called");
-        returnDoubleValue(switchDevice->getSwitchValue(id), "", 0);
-        
+    u_int32_t id = getAlpacaID("Id");
+    if (_validAPIRequest){
+        if (_server->method() == HTTP_GET){
+            Log.traceln("GET SwitchValue called");
+            returnDoubleValue(switchDevice->getSwitchValue(id), "", 0);
+        } else if (_server->method() == HTTP_PUT){
+            Log.traceln("PUT SwitchValue called");
+            double val = getAlpacaDouble("Value");
+            if (_validAPIRequest){
+                if (val >= switchDevice->getSwitchMin(id) && val <= switchDevice->getSwitchMax(id)){
+                    switchDevice->setSwitchValue(id, val);
+                } else {
+                    returnError400("Switch value out of bounds");
+                    return;
+                } 
+            } else {
+                returnError400("Invalid parameter value");
+                return;
+            }
+            returnEmpty("", 0);
+        }
+    } else {
+        returnError400("Invalid parameter value");
     }
-    else if (_server->method() == HTTP_PUT)
-    {
-        Log.traceln("PUT SwitchValue called");
-        double val = (double)_server->arg("Value").toDouble();
-        
-        switchDevice->setSwitchValue(id, val);
-        returnEmpty("", 0);
-    }
-
-
 }
 
 void AlpacaHandler::handlerDriver0MinSwitchValue()
 {
     Log.traceln("handlerDriver0MinSwitchValue called");
-    if (conformanceCheck() == false){
+    if (!conformanceCheck()){
         return;
     }
 
-    u_int32_t id = (uint32_t)_server->arg("ID").toInt();
-    
-    returnDoubleValue(switchDevice->getSwitchMin(id), "", 0);
+    u_int32_t id = getAlpacaID("Id");
+    if (_validAPIRequest){
+        returnDoubleValue(switchDevice->getSwitchMin(id), "", 0);
+    } else {
+        returnError400("Invalid parameter value");
+    }
 }
 
 void AlpacaHandler::handlerDriver0MaxSwitchValue()
 {
     Log.traceln("handlerDriver0MaxSwitchValue called");
-    if (conformanceCheck() == false){
+    if (!conformanceCheck()){
         return;
     }
 
-    u_int32_t id = (uint32_t)_server->arg("ID").toInt();
-    
-    returnDoubleValue(switchDevice->getSwitchMax(id), "", 0);
+    u_int32_t id = getAlpacaID("Id");
+    if (_validAPIRequest){
+        returnDoubleValue(switchDevice->getSwitchMax(id), "", 0);
+    } else {
+        returnError400("Invalid parameter value");
+    }
 }
 
 void AlpacaHandler::handlerDriver0SwitchStep()
 {
     Log.traceln("handlerDriver0SwitchStep called");
-    if (conformanceCheck() == false){
+    if (!conformanceCheck()){
         return;
     }
 
-    u_int32_t id = (uint32_t)_server->arg("ID").toInt();
+    u_int32_t id = getAlpacaID("Id");
+    if (_validAPIRequest){
+        returnDoubleValue(switchDevice->getSwitchStep(id), "", 0);
+    } else {
+        returnError400("Invalid parameter value");
+    }
     
-    returnDoubleValue(switchDevice->getSwitchStep(id), "", 0);
 }
 
 /***********************************************
@@ -508,6 +533,44 @@ bool AlpacaHandler::conformanceCheck(){
         return false;
     }
     return true;
+}
+
+bool AlpacaHandler::getAlpacaBool(String parameterName){
+    String parameterValue = _server->arg(parameterName);
+    parameterValue.toLowerCase();
+    if (parameterValue == "true" ){
+        _validAPIRequest = true;
+        return true;
+    } else if (parameterValue == "false"){
+        _validAPIRequest = true;
+    } else {
+        _validAPIRequest = false;
+    }
+    return false;
+}
+
+uint32_t AlpacaHandler::getAlpacaID(String parameterName){
+    String parameterValue = _server->arg(parameterName);
+    uint32_t value = parameterValue.toInt();
+    //toInt returns 0 if input is whitespace, null, etc. Compare to original to see if it's actually 0
+    if (value == 0){
+        _validAPIRequest =  (parameterValue == "0");
+    } else {
+        _validAPIRequest = (value > 0 && value < NR_OF_CHANNELS);
+    }
+    return value;
+}
+
+double AlpacaHandler::getAlpacaDouble(String parameterName){
+    String parameterValue = _server->arg(parameterName);
+    double value = parameterValue.toDouble();
+    //toDouble returns 0 if input is whitespace, null, etc. Compare to original to see if it's actually 0
+    if (value == 0){
+        _validAPIRequest = (parameterValue == "0");
+    } else {
+        _validAPIRequest = true;
+    }
+    return value;
 }
 
 /*********************************************

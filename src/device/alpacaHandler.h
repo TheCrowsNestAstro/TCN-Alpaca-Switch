@@ -66,7 +66,11 @@ class AlpacaHandler
         void incrementServerTransID();
 
         //Alpaca Conformance Methods
+        bool _validAPIRequest;
         bool conformanceCheck();
+        bool getAlpacaBool(String parameterName);
+        uint32_t getAlpacaID(String parameterName);
+        double getAlpacaDouble(String parameterName);
 
         // Handler Return Methods
         void returnEmpty(String errMsg, int errNr);
