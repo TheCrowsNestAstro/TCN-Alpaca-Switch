@@ -5,6 +5,13 @@
 #include <ArduinoLog.h>
 #include "configuration.hpp"
 #include <ArduinoJson.h>
+#include "struct.h"
+
+#if BOARD == BOARD_OPENASTROPOWERHUB
+#include "device\OpenAstroPowerHub\OpenAstroPowerHub.h"
+#elif BOARD == BOARD_ESP8266_RELAY_MODULE
+#include "device\ESP8266 Relay Module\ESP8266_Relay_Module.h"
+#endif
 
 class SwitchDevice
 {
@@ -14,27 +21,28 @@ class SwitchDevice
         bool connected = false;
         String uniqueID = "";
 
-        String channelNames[NR_OF_RELAYS] = {"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""};
-        String channelDesc[NR_OF_RELAYS] = {"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""};
-        //bool relayStateBool[NR_OF_RELAYS] = {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
-        //double relayStateValue[NR_OF_RELAYS] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,};
-
-        void setRelayState(int idx, bool state);
-        void setRelayValue(int idx, double value);
-
-        bool getRelayState(int idx);
-        double getRelayStateDouble(int idx);
-
         void readEEPROM();
         void writeEEPROM();
+
+        bool getSwitchState(uint32_t id);
+        String getSwitchDesc(uint32_t id);
+        String getSwitchName(uint32_t id);
+        double getSwitchValue(uint32_t id);
+        double getSwitchMin(uint32_t id);
+        double getSwitchMax(uint32_t id);
+        void setSwitchState(uint32_t id, bool state);
+        void setSwitchName(uint32_t id, String name);
+        void setSwitchValue(uint32_t id, double value);
+        double getSwitchStep(uint32_t id);
 
         // MQTT
         String getSwitchState();
 
     private:
-        void writeRelayData(int relay, int boolValue, double doubleValue);
-        //uint16_t relayData = 0b0000000000000000;
-        //byte relayData = B00000000;
-        boolean registers[NR_OF_RELAYS];
-        double registersDouble[NR_OF_RELAYS];
+        struct channel channels[NR_OF_CHANNELS];
+#if BOARD == BOARD_OPENASTROPOWERHUB
+        OpenAstroPowerHub *_device;
+#elif BOARD == BOARD_ESP8266_RELAY_MODULE
+        ESP8266_Relay_Module *_device;
+#endif
 };
