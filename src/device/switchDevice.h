@@ -1,10 +1,8 @@
 #pragma once
 
 #include <Arduino.h>
-#include <EEPROM.h>
 #include <ArduinoLog.h>
 #include "configuration.hpp"
-#include <ArduinoJson.h>
 
 class SwitchDevice
 {
@@ -14,27 +12,31 @@ class SwitchDevice
         bool connected = false;
         String uniqueID = "";
 
-        String channelNames[NR_OF_RELAYS] = {"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""};
-        String channelDesc[NR_OF_RELAYS] = {"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""};
-        //bool relayStateBool[NR_OF_RELAYS] = {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
-        //double relayStateValue[NR_OF_RELAYS] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,};
+        bool relayState0 = false;
+        bool relayState1 = false;
+        bool relayState2 = false;
+        bool relayState3 = false;
+        bool relayState4 = false;
+        bool relayState5 = false;
+        bool relayState6 = false;
+        bool relayState7 = false;
 
-        void setRelayState(int idx, bool state);
-        void setRelayValue(int idx, double value);
+        double relayValue0 = 0.0;
+        double relayValue1 = 0.0;
+        double relayValue2 = 0.0;
+        double relayValue3 = 0.0;
+        double relayValue4 = 0.0;
+        double relayValue5 = 0.0;
+        double relayValue6 = 0.0;
+        double relayValue7 = 0.0;
 
-        bool getRelayState(int idx);
-        double getRelayStateDouble(int idx);
+        bool relayStateBool[8] = {false, false, false, false, false, false, false};
+        double relayStateValue[8] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
-        void readEEPROM();
-        void writeEEPROM();
-
-        // MQTT
-        String getSwitchState();
+        void setRelayState(int relayNr, bool state);
+        void setRelayValue(int relayNr, double value);
 
     private:
         void writeRelayData(int relay, int boolValue, double doubleValue);
-        //uint16_t relayData = 0b0000000000000000;
-        //byte relayData = B00000000;
-        boolean registers[NR_OF_RELAYS];
-        double registersDouble[NR_OF_RELAYS];
+        byte relayData = B00000000;
 };
